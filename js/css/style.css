@@ -55,3 +55,10 @@ li {
 .green { color: #0f0; }
 .yellow { color: #ff0; }
 .red { color: #f00; }
+#financeStats {
+  margin-top: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid #0f0;
+  background: #111;
+  font-size: 0.95rem;
+}
