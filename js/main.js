@@ -112,3 +112,23 @@ function loadTasks() {
 
 window.addEventListener("beforeunload", saveTasks);
 window.addEventListener("DOMContentLoaded", loadTasks);
+// ✅ Сохранение окружения
+function savePeople() {
+  const people = Array.from(document.querySelectorAll("#peopleList li")).map(li => li.innerHTML);
+  localStorage.setItem("people", JSON.stringify(people));
+}
+
+function loadPeople() {
+  const data = localStorage.getItem("people");
+  if (data) {
+    const people = JSON.parse(data);
+    people.forEach(p => {
+      const li = document.createElement("li");
+      li.innerHTML = p;
+      document.getElementById("peopleList").appendChild(li);
+    });
+  }
+}
+
+window.addEventListener("beforeunload", savePeople);
+window.addEventListener("DOMContentLoaded", loadPeople);
