@@ -49,4 +49,45 @@ function addPerson() {
 function saveLog(entry) {
   const now = new Date().toLocaleString();
   console.log(`[LOG] ${now} — ${entry}`);
+}// ✅ Финансы
+let totalIncome = 0;
+let totalExpense = 0;
+
+function addFinance() {
+  const income = parseFloat(document.getElementById("income").value) || 0;
+  const expense = parseFloat(document.getElementById("expense").value) || 0;
+
+  totalIncome += income;
+  totalExpense += expense;
+
+  const balance = totalIncome - totalExpense;
+  const percent = totalExpense === 0 ? 100 : Math.round((totalIncome / totalExpense) * 100);
+
+  document.getElementById("financeStats").innerHTML = `
+    💵 Доход: ${totalIncome} <br>
+    💸 Расход: ${totalExpense} <br>
+    📊 Баланс: <span style="color:${balance >= 0 ? '#0f0' : '#f00'}">${balance}</span><br>
+    ⚖️ Доход/Расход: <span style="color:${
+      percent > 100 ? '#0f0' : percent < 100 ? '#f00' : '#ff0'
+    }">${percent}%</span>
+  `;
+
+  saveLog(`Финансы обновлены: +${income}, -${expense}`);
+  document.getElementById("income").value = "";
+  document.getElementById("expense").value = "";
+}
+
+// ✅ Физо
+function addWorkout() {
+  const exercise = document.getElementById("exercise").value.trim();
+  const amount = document.getElementById("amount").value.trim();
+
+  if (exercise && amount) {
+    const li = document.createElement("li");
+    li.textContent = `🏃 ${exercise}: ${amount}`;
+    document.getElementById("fitLog").appendChild(li);
+    saveLog(`Физо: ${exercise} — ${amount}`);
+    document.getElementById("exercise").value = "";
+    document.getElementById("amount").value = "";
+  }
 }
