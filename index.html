@@ -37,7 +37,23 @@
     <button onclick="addPerson()">Добавить</button>
     <ul id="peopleList"></ul>
   </section>
+<!-- Финансы -->
+<section id="finance-block">
+  <h2>💰 Финансы</h2>
+  <input type="number" id="income" placeholder="Доход +" />
+  <input type="number" id="expense" placeholder="Расход -" />
+  <button onclick="addFinance()">Сохранить</button>
+  <div id="financeStats"></div>
+</section>
 
+<!-- Физо -->
+<section id="fit-block">
+  <h2>🏋️ Физо</h2>
+  <input type="text" id="exercise" placeholder="Тип (турник, бег...)" />
+  <input type="number" id="amount" placeholder="Количество / время" />
+  <button onclick="addWorkout()">Записать</button>
+  <ul id="fitLog"></ul>
+</section>
   <script src="js/main.js"></script>
 </body>
 </html>
