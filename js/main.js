@@ -92,4 +92,23 @@ function addWorkout() {
 function saveLog(entry) {
   const now = new Date().toLocaleString();
   console.log(`[LOG] ${now} — ${entry}`);
+}// ✅ Сохранение задач
+function saveTasks() {
+  const tasks = Array.from(document.querySelectorAll("#taskList li")).map(li => li.textContent);
+  localStorage.setItem("tasks", JSON.stringify(tasks));
 }
+
+function loadTasks() {
+  const data = localStorage.getItem("tasks");
+  if (data) {
+    const tasks = JSON.parse(data);
+    tasks.forEach(t => {
+      const li = document.createElement("li");
+      li.textContent = t;
+      document.getElementById("taskList").appendChild(li);
+    });
+  }
+}
+
+window.addEventListener("beforeunload", saveTasks);
+window.addEventListener("DOMContentLoaded", loadTasks);
