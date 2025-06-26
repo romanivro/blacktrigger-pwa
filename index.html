@@ -11,6 +11,12 @@
   <h1>BlackTrigger</h1>
 
   <section id="rule-block">
+<section id="task-block">
+  <h2>📋 План на день</h2>
+  <input type="text" id="taskInput" placeholder="Ввести задачу..." />
+  <button onclick="addTask()">Добавить</button>
+  <ul id="taskList"></ul>
+</section>
     <h2>📜 Правило дня</h2>
     <div id="rule" class="rule">Загружается...</div>
     <button onclick="getRule()">Следующее правило</button>
