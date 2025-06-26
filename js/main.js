@@ -1,3 +1,19 @@
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("BlackTrigger активен");
-});
+const rules = [
+  "Не оправдывайся — объяснение без запроса — слабость.",
+  "Если не приносит ресурс — отсекай.",
+  "Хищник молчит чаще, чем говорит.",
+  "Контроль над собой — контроль над всем.",
+  "Каждое взаимодействие — война за интересы.",
+  "Грубость — фильтр. Кто слаб — отпадёт сам.",
+  "Сначала доминируй, потом дружи.",
+  "Если не давят на тебя — дави ты.",
+  "Ложь — инструмент, не слабость.",
+  "Правильное ≠ выгодное. Выбирай выгоду."
+];
+
+function getRule() {
+  const index = Math.floor(Math.random() * rules.length);
+  document.getElementById("rule").textContent = rules[index];
+}
+
+document.addEventListener("DOMContentLoaded", getRule);
