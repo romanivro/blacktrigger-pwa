@@ -1,6 +1,17 @@
-body {
-  background: #000;
-  color: #0f0;
-  font-family: monospace;
-  padding: 2rem;
+.rule {
+  background: #111;
+  border: 1px solid #0f0;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  background: #0f0;
+  color: #000;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
 }
