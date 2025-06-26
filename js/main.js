@@ -1,4 +1,4 @@
-// ✅ Правила дня
+// 📜 Правила дня
 const rules = [
   "Не оправдывайся — объяснение без запроса — слабость.",
   "Если не приносит ресурс — отсекай.",
@@ -19,7 +19,7 @@ function getRule() {
 
 document.addEventListener("DOMContentLoaded", getRule);
 
-// ✅ План на день
+// 📋 План на день
 function addTask() {
   const input = document.getElementById("taskInput");
   const value = input.value.trim();
@@ -32,7 +32,7 @@ function addTask() {
   }
 }
 
-// ✅ Окружение
+// 👥 Окружение
 function addPerson() {
   const name = document.getElementById("personName").value.trim();
   const status = document.getElementById("personStatus").value;
@@ -45,11 +45,7 @@ function addPerson() {
   }
 }
 
-// ✅ Лог (пока просто в консоль)
-function saveLog(entry) {
-  const now = new Date().toLocaleString();
-  console.log(`[LOG] ${now} — ${entry}`);
-}// ✅ Финансы
+// 💰 Финансы
 let totalIncome = 0;
 let totalExpense = 0;
 
@@ -77,7 +73,7 @@ function addFinance() {
   document.getElementById("expense").value = "";
 }
 
-// ✅ Физо
+// 🏋️ Физо
 function addWorkout() {
   const exercise = document.getElementById("exercise").value.trim();
   const amount = document.getElementById("amount").value.trim();
@@ -90,4 +86,10 @@ function addWorkout() {
     document.getElementById("exercise").value = "";
     document.getElementById("amount").value = "";
   }
+}
+
+// 🧠 Лог
+function saveLog(entry) {
+  const now = new Date().toLocaleString();
+  console.log(`[LOG] ${now} — ${entry}`);
 }
