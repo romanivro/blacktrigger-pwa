@@ -1,3 +1,4 @@
+// ✅ Правила дня
 const rules = [
   "Не оправдывайся — объяснение без запроса — слабость.",
   "Если не приносит ресурс — отсекай.",
@@ -11,7 +12,15 @@ const rules = [
   "Правильное ≠ выгодное. Выбирай выгоду."
 ];
 
-function getRule() function addTask() {
+function getRule() {
+  const index = Math.floor(Math.random() * rules.length);
+  document.getElementById("rule").textContent = rules[index];
+}
+
+document.addEventListener("DOMContentLoaded", getRule);
+
+// ✅ План на день
+function addTask() {
   const input = document.getElementById("taskInput");
   const value = input.value.trim();
   if (value) {
@@ -19,18 +28,25 @@ function getRule() function addTask() {
     li.textContent = "🔹 " + value;
     document.getElementById("taskList").appendChild(li);
     input.value = "";
-
-    saveLog("Добавлена задача: " + value);
+    saveLog("Задача добавлена: " + value);
   }
 }
 
+// ✅ Окружение
+function addPerson() {
+  const name = document.getElementById("personName").value.trim();
+  const status = document.getElementById("personStatus").value;
+  if (name) {
+    const li = document.createElement("li");
+    li.innerHTML = `${name} — <span class="${status}">${status.toUpperCase()}</span>`;
+    document.getElementById("peopleList").appendChild(li);
+    saveLog("Добавлен человек: " + name + " (" + status + ")");
+    document.getElementById("personName").value = "";
+  }
+}
+
+// ✅ Лог (пока просто в консоль)
 function saveLog(entry) {
   const now = new Date().toLocaleString();
   console.log(`[LOG] ${now} — ${entry}`);
-  // В будущем: можно сохранять в localStorage или на сервер
-}{
-  const index = Math.floor(Math.random() * rules.length);
-  document.getElementById("rule").textContent = rules[index];
 }
-
-document.addEventListener("DOMContentLoaded", getRule);
