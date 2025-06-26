@@ -152,3 +152,24 @@ function loadWorkouts() {
 
 window.addEventListener("beforeunload", saveWorkouts);
 window.addEventListener("DOMContentLoaded", loadWorkouts);
+// ✅ Сохранение финансов
+function saveFinance() {
+  const data = {
+    income: totalIncome,
+    expense: totalExpense
+  };
+  localStorage.setItem("finance", JSON.stringify(data));
+}
+
+function loadFinance() {
+  const data = localStorage.getItem("finance");
+  if (data) {
+    const { income, expense } = JSON.parse(data);
+    totalIncome = income;
+    totalExpense = expense;
+    addFinance(); // пересчёт и отрисовка
+  }
+}
+
+window.addEventListener("beforeunload", saveFinance);
+window.addEventListener("DOMContentLoaded", loadFinance);
