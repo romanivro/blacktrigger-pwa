@@ -132,3 +132,23 @@ function loadPeople() {
 
 window.addEventListener("beforeunload", savePeople);
 window.addEventListener("DOMContentLoaded", loadPeople);
+// ✅ Сохранение физо
+function saveWorkouts() {
+  const entries = Array.from(document.querySelectorAll("#fitLog li")).map(li => li.textContent);
+  localStorage.setItem("fitLog", JSON.stringify(entries));
+}
+
+function loadWorkouts() {
+  const data = localStorage.getItem("fitLog");
+  if (data) {
+    const entries = JSON.parse(data);
+    entries.forEach(entry => {
+      const li = document.createElement("li");
+      li.textContent = entry;
+      document.getElementById("fitLog").appendChild(li);
+    });
+  }
+}
+
+window.addEventListener("beforeunload", saveWorkouts);
+window.addEventListener("DOMContentLoaded", loadWorkouts);
