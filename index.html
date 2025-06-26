@@ -10,16 +10,32 @@
 <body>
   <h1>BlackTrigger</h1>
 
+  <!-- Правило дня -->
   <section id="rule-block">
-<section id="task-block">
-  <h2>📋 План на день</h2>
-  <input type="text" id="taskInput" placeholder="Ввести задачу..." />
-  <button onclick="addTask()">Добавить</button>
-  <ul id="taskList"></ul>
-</section>
     <h2>📜 Правило дня</h2>
     <div id="rule" class="rule">Загружается...</div>
     <button onclick="getRule()">Следующее правило</button>
+  </section>
+
+  <!-- План дня -->
+  <section id="task-block">
+    <h2>📋 План на день</h2>
+    <input type="text" id="taskInput" placeholder="Ввести задачу..." />
+    <button onclick="addTask()">Добавить</button>
+    <ul id="taskList"></ul>
+  </section>
+
+  <!-- Окружение -->
+  <section id="env-block">
+    <h2>👥 Окружение</h2>
+    <input type="text" id="personName" placeholder="Имя или позывной" />
+    <select id="personStatus">
+      <option value="green">🟢 Лояльный</option>
+      <option value="yellow">🟡 Нейтрал</option>
+      <option value="red">🔴 Враг</option>
+    </select>
+    <button onclick="addPerson()">Добавить</button>
+    <ul id="peopleList"></ul>
   </section>
 
   <script src="js/main.js"></script>
