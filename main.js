@@ -328,4 +328,31 @@ function describeArchetype(type) {
     default:
       return "Наблюдатель вне архетипов.";
   }
+}// 🗺️ Карта стратегии
+function addGoal() {
+  const text = document.getElementById("goalInput").value.trim();
+  const type = document.getElementById("goalType").value;
+
+  if (!text) return;
+
+  const li = document.createElement("li");
+  li.textContent = `🎯 ${text}`;
+  li.className = type;
+  li.setAttribute("data-status", "plan");
+  li.onclick = () => cycleGoalStatus(li);
+
+  document.getElementById("strategyList").appendChild(li);
+  document.getElementById("goalInput").value = "";
+  saveLog("Добавлена цель: " + text + " [" + type + "]");
+}
+
+function cycleGoalStatus(li) {
+  const statuses = ["plan", "process", "done", "fail"];
+  let current = li.getAttribute("data-status") || "plan";
+  let index = statuses.indexOf(current);
+  let next = statuses[(index + 1) % statuses.length];
+  li.setAttribute("data-status", next);
+  li.style.opacity = next === "fail" ? 0.5 : 1;
+  li.style.textDecoration = next === "done" ? "line-through" : "none";
+  saveLog(`Цель обновлена: ${li.textContent} → ${next}`);
 }
