@@ -66,6 +66,17 @@
   <div id="quiz"></div>
   <button onclick="startTest()">Пройти тест</button>
   <div id="result"></div>
+</section><!-- 🗺️ Карта стратегии -->
+<section id="strategy-block">
+  <h2>🗺️ Карта стратегии</h2>
+  <input type="text" id="goalInput" placeholder="Цель..." />
+  <select id="goalType">
+    <option value="short">Краткосрочная</option>
+    <option value="long">Долгосрочная</option>
+    <option value="tactical">Ситуативная</option>
+  </select>
+  <button onclick="addGoal()">Добавить</button>
+  <ul id="strategyList"></ul>
 </section>
 </body>
 </html>
