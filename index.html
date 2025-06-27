@@ -81,6 +81,12 @@
 <section id="alerts">
   <h2>⚠️ Подсказки системы</h2>
   <ul id="alertList"></ul>
+</section><!-- 💾 Резерв и экспорт -->
+<section id="backup-block">
+  <h2>💾 Резервная копия</h2>
+  <button onclick="exportData()">Экспорт</button>
+  <input type="file" id="importFile" accept=".json" />
+  <button onclick="importData()">Импорт</button>
 </section>
 </body>
 </html>
