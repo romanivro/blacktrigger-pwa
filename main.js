@@ -238,11 +238,26 @@ function loadFinance() {
   }
 }
 
-window.addEventListener("beforeunload", () => {
-  saveTasks();
-  savePeople();
-  saveWorkouts();
-  saveFinance();
+window.addEventListener("DOMContentLoaded", () => {
+  // ... другие загрузки
+
+  const people = JSON.parse(localStorage.getItem("people") || "[]");
+  people.forEach(p => {
+    const li = document.createElement("li");
+    li.innerHTML = p;
+
+    const btn = document.createElement("button");
+    btn.textContent = "❌";
+    btn.style.marginLeft = "10px";
+    btn.onclick = () => {
+      li.remove();
+      saveLog("Удалён человек (из хранилища): " + li.textContent);
+      updatePeopleStorage();
+    };
+
+    li.appendChild(btn);
+    document.getElementById("peopleList").appendChild(li);
+  });
 });
 
 window.addEventListener("DOMContentLoaded", () => {
