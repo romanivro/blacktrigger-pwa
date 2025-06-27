@@ -222,14 +222,7 @@ function loadFinance() {
   }
 }
 
-window.addEventListener("DOMContentLoaded", () => {
-  fixPeopleData(); // 👈 ДО загрузки
-  loadTasks();
-  loadPeople();
-  loadWorkouts();
-  loadFinance();
-  getRule();
-});
+
 });
 function fixPeopleData() {
   const people = JSON.parse(localStorage.getItem("people") || "[]");
@@ -259,3 +252,45 @@ function fixPeopleData() {
   localStorage.setItem("people", JSON.stringify(fixed));
   location.reload();
 }
+function fixPeopleData() {
+  const people = JSON.parse(localStorage.getItem("people") || "[]");
+  const fixed = [];
+
+  people.forEach(p => {
+    // Если ❌ уже есть, не трогаем
+    if (p.includes("❌")) {
+      fixed.push(p);
+    } else {
+      // Добавим кнопку удаления
+      const li = document.createElement("li");
+      li.innerHTML = p;
+
+      const btn = document.createElement("button");
+      btn.textContent = "❌";
+      btn.style.marginLeft = "10px";
+      btn.onclick = () => {
+        li.remove();
+        saveLog("Удалён человек: " + li.textContent);
+        updatePeopleStorage();
+      };
+
+      li.appendChild(btn);
+      fixed.push(li.innerHTML);
+    }
+  });
+
+  localStorage.setItem("people", JSON.stringify(fixed));
+}
+
+// ⏳ Гарантированный запуск
+window.addEventListener("DOMContentLoaded", () => {
+  fixPeopleData();
+  loadTasks();
+  loadPeople();
+  loadWorkouts();
+  loadFinance();
+  loadReminders();
+  getRule();
+  setTimeout(checkAlerts, 1000);
+  setTimeout(runRecon, 1500);
+});
