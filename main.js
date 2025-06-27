@@ -223,9 +223,39 @@ function loadFinance() {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
+  fixPeopleData(); // 👈 ДО загрузки
   loadTasks();
   loadPeople();
   loadWorkouts();
   loadFinance();
   getRule();
 });
+});
+function fixPeopleData() {
+  const people = JSON.parse(localStorage.getItem("people") || "[]");
+  const fixed = [];
+
+  people.forEach(p => {
+    if (p.includes("❌")) {
+      fixed.push(p);
+    } else {
+      const li = document.createElement("li");
+      li.innerHTML = p;
+
+      const btn = document.createElement("button");
+      btn.textContent = "❌";
+      btn.style.marginLeft = "10px";
+      btn.onclick = () => {
+        li.remove();
+        saveLog("Удалён человек: " + li.textContent);
+        updatePeopleStorage();
+      };
+
+      li.appendChild(btn);
+      fixed.push(li.innerHTML);
+    }
+  });
+
+  localStorage.setItem("people", JSON.stringify(fixed));
+  location.reload();
+}
