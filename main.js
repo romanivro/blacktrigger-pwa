@@ -600,3 +600,52 @@ function updateActivityChart() {
     }
   });
 }
+// 🕵️ Боевая разведка окружения
+function runRecon() {
+  const alerts = [];
+  const raw = localStorage.getItem("people");
+  if (!raw) return;
+  const people = JSON.parse(raw);
+
+  people.forEach(p => {
+    const nameMatch = p.match(/^(.*?)\s+—/);
+    const statusMatch = p.match(/class="(.*?)"/);
+    if (!nameMatch || !statusMatch) return;
+
+    const name = nameMatch[1];
+    const status = statusMatch[1];
+
+    // Враг не вычеркнут
+    if (status === "red") {
+      alerts.push(`🩸 ${name} помечен как враг, но не устранён.`);
+    }
+
+    // Балласт
+    if (p.includes("балласт") || p.includes("не даёт ресурс")) {
+      alerts.push(`⚠️ ${name} помечен как балласт, но сохраняется.`);
+    }
+
+    // Религиозность + слабость
+    if (p.includes("религиозен") && p.includes("слаб")) {
+      alerts.push(`🧪 ${name} — уязвим, но может влиять на тебя. Опасность.`);
+    }
+
+    // Нейтрал без оценки
+    if (status === "yellow" && !p.includes("+") && !p.includes("-")) {
+      alerts.push(`🟡 ${name} застрял в нейтральной зоне. Решай судьбу.`);
+    }
+  });
+
+  const alertList = document.getElementById("alertList");
+  alerts.forEach(msg => {
+    const li = document.createElement("li");
+    li.textContent = msg;
+    li.style.color = "#f90";
+    alertList.appendChild(li);
+    saveLog("Разведка: " + msg);
+  });
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  setTimeout(runRecon, 1500); // запустить после загрузки окружения
+});
