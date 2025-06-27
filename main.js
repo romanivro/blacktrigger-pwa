@@ -356,3 +356,51 @@ function cycleGoalStatus(li) {
   li.style.textDecoration = next === "done" ? "line-through" : "none";
   saveLog(`Цель обновлена: ${li.textContent} → ${next}`);
 }
+// ⚠️ Автоподсказки и сигналы
+function checkAlerts() {
+  const alerts = [];
+
+  // 1. Нет физо
+  const fitData = localStorage.getItem("fitLog");
+  if (!fitData || JSON.parse(fitData).length === 0) {
+    alerts.push("❌ Нет зафиксированных тренировок. Тело простаивает.");
+  }
+
+  // 2. Враги без реакции
+  const people = localStorage.getItem("people");
+  if (people) {
+    const redCount = JSON.parse(people).filter(p => p.includes("red")).length;
+    if (redCount > 0) {
+      alerts.push("🔴 В окружении есть враги. Прими меры.");
+    }
+  }
+
+  // 3. Баланс минусовой
+  const finance = localStorage.getItem("finance");
+  if (finance) {
+    const f = JSON.parse(finance);
+    if (f.income < f.expense) {
+      alerts.push("📉 Расходы превышают доход. Пересмотри активность.");
+    }
+  }
+
+  // 4. Нет целей
+  const strategyList = document.getElementById("strategyList");
+  if (strategyList.children.length === 0) {
+    alerts.push("🪓 Карта стратегии пуста. Ты идёшь без вектора.");
+  }
+
+  // Вывод
+  const alertList = document.getElementById("alertList");
+  alertList.innerHTML = "";
+  alerts.forEach(msg => {
+    const li = document.createElement("li");
+    li.textContent = msg;
+    li.style.color = "#f00";
+    alertList.appendChild(li);
+  });
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  setTimeout(checkAlerts, 1000); // анализ после загрузки
+});
