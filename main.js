@@ -1,3 +1,5 @@
+
+// 📜 Правила дня
 const rules = [
   "Не оправдывайся — объяснение без запроса — слабость.",
   "Если не приносит ресурс — отсекай.",
@@ -18,6 +20,7 @@ function getRule() {
 
 document.addEventListener("DOMContentLoaded", getRule);
 
+// 📋 План на день
 function addTask() {
   const input = document.getElementById("taskInput");
   const value = input.value.trim();
@@ -30,6 +33,7 @@ function addTask() {
   }
 }
 
+// 👥 Окружение
 function addPerson() {
   const name = document.getElementById("personName").value.trim();
   const status = document.getElementById("personStatus").value;
@@ -42,11 +46,13 @@ function addPerson() {
   }
 }
 
+// 🧠 Лог
 function saveLog(entry) {
   const now = new Date().toLocaleString();
   console.log(`[LOG] ${now} — ${entry}`);
 }
 
+// 💰 Финансы
 let totalIncome = 0;
 let totalExpense = 0;
 
@@ -74,10 +80,8 @@ function addFinance() {
   document.getElementById("expense").value = "";
 }
 
-function addWorkout() {function addWorkout() {
-  ...
-  updateFitChart(); // ← добавь эту строку в конце
-}
+// 🏋️ Физо
+function addWorkout() {
   const exercise = document.getElementById("exercise").value.trim();
   const amount = document.getElementById("amount").value.trim();
 
@@ -88,8 +92,10 @@ function addWorkout() {function addWorkout() {
     saveLog(`Физо: ${exercise} — ${amount}`);
     document.getElementById("exercise").value = "";
     document.getElementById("amount").value = "";
+    updateFitChart();
   }
 }
+
 // 📊 График физо
 let fitChart;
 
@@ -143,3 +149,89 @@ function updateFitChart() {
     }
   });
 }
+
+// ✅ Сохранение данных
+function saveTasks() {
+  const tasks = Array.from(document.querySelectorAll("#taskList li")).map(li => li.textContent);
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+function loadTasks() {
+  const data = localStorage.getItem("tasks");
+  if (data) {
+    const tasks = JSON.parse(data);
+    tasks.forEach(t => {
+      const li = document.createElement("li");
+      li.textContent = t;
+      document.getElementById("taskList").appendChild(li);
+    });
+  }
+}
+
+function savePeople() {
+  const people = Array.from(document.querySelectorAll("#peopleList li")).map(li => li.innerHTML);
+  localStorage.setItem("people", JSON.stringify(people));
+}
+
+function loadPeople() {
+  const data = localStorage.getItem("people");
+  if (data) {
+    const people = JSON.parse(data);
+    people.forEach(p => {
+      const li = document.createElement("li");
+      li.innerHTML = p;
+      document.getElementById("peopleList").appendChild(li);
+    });
+  }
+}
+
+function saveWorkouts() {
+  const entries = Array.from(document.querySelectorAll("#fitLog li")).map(li => li.textContent);
+  localStorage.setItem("fitLog", JSON.stringify(entries));
+}
+
+function loadWorkouts() {
+  const data = localStorage.getItem("fitLog");
+  if (data) {
+    const entries = JSON.parse(data);
+    entries.forEach(entry => {
+      const li = document.createElement("li");
+      li.textContent = entry;
+      document.getElementById("fitLog").appendChild(li);
+    });
+  }
+  updateFitChart();
+}
+
+function saveFinance() {
+  const data = {
+    income: totalIncome,
+    expense: totalExpense
+  };
+  localStorage.setItem("finance", JSON.stringify(data));
+}
+
+function loadFinance() {
+  const data = localStorage.getItem("finance");
+  if (data) {
+    const { income, expense } = JSON.parse(data);
+    totalIncome = income;
+    totalExpense = expense;
+    addFinance(); // пересчёт и отрисовка
+  }
+}
+
+window.addEventListener("beforeunload", () => {
+  saveTasks();
+  savePeople();
+  saveWorkouts();
+  saveFinance();
+});
+
+window.addEventListener("DOMContentLoaded", () => {
+  loadTasks();
+  loadPeople();
+  loadWorkouts();
+  loadFinance();
+  getRule();
+});
