@@ -32,43 +32,55 @@ function addTask() {
     li.textContent = "🔹 " + value;
     document.getElementById("taskList").appendChild(li);
     input.value = "";
+    saveTasks();
     saveLog("Задача добавлена: " + value);
   }
 }
 
 // 👥 Окружение
-function createPersonElement(name, status) {
+function createPersonElement(person, index) {
   const li = document.createElement("li");
-  li.innerHTML = `${name} — <span class="${status}">${status.toUpperCase()}</span>`;
+  li.innerHTML = `${person.name} — <span class="${person.status}">${person.status.toUpperCase()}</span>`;
 
   const btn = document.createElement("button");
   btn.textContent = "❌";
   btn.style.marginLeft = "10px";
   btn.onclick = () => {
-    li.remove();
-    saveLog("Удалён человек: " + name);
-    updatePeopleStorage();
+    people.splice(index, 1);
+    savePeople();
+    renderPeople();
+    saveLog("Удалён человек: " + person.name);
   };
 
   li.appendChild(btn);
   return li;
 }
 
+let people = [];
+
 function addPerson() {
   const name = document.getElementById("personName").value.trim();
   const status = document.getElementById("personStatus").value;
   if (name) {
-    const li = createPersonElement(name, status);
-    document.getElementById("peopleList").appendChild(li);
+    people.push({ name, status });
+    savePeople();
+    renderPeople();
     document.getElementById("personName").value = "";
     saveLog("Добавлен человек: " + name + " (" + status + ")");
-    updatePeopleStorage();
   }
 }
 
-function updatePeopleStorage() {
-  const items = Array.from(document.querySelectorAll("#peopleList li")).map(li => li.innerHTML);
-  localStorage.setItem("people", JSON.stringify(items));
+function savePeople() {
+  localStorage.setItem("people", JSON.stringify(people));
+}
+
+function renderPeople() {
+  const list = document.getElementById("peopleList");
+  list.innerHTML = "";
+  people.forEach((person, index) => {
+    const li = createPersonElement(person, index);
+    list.appendChild(li);
+  });
 }
 
 // 💰 Финансы
@@ -94,6 +106,7 @@ function addFinance() {
     }">${percent}%</span>
   `;
 
+  saveFinance();
   saveLog(`Финансы обновлены: +${income}, -${expense}`);
   document.getElementById("income").value = "";
   document.getElementById("expense").value = "";
@@ -108,10 +121,11 @@ function addWorkout() {
     const li = document.createElement("li");
     li.textContent = `🏃 ${exercise}: ${amount}`;
     document.getElementById("fitLog").appendChild(li);
+    saveWorkouts();
+    updateFitChart();
     saveLog(`Физо: ${exercise} — ${amount}`);
     document.getElementById("exercise").value = "";
     document.getElementById("amount").value = "";
-    updateFitChart();
   }
 }
 
@@ -151,9 +165,7 @@ function updateFitChart() {
       }]
     },
     options: {
-      plugins: {
-        legend: { display: false }
-      },
+      plugins: { legend: { display: false } },
       scales: {
         y: {
           beginAtZero: true,
@@ -169,7 +181,23 @@ function updateFitChart() {
   });
 }
 
-// ✅ Загрузка
+// ✅ Сохранение
+function saveTasks() {
+  const tasks = Array.from(document.querySelectorAll("#taskList li")).map(li => li.textContent);
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+}
+
+function saveWorkouts() {
+  const entries = Array.from(document.querySelectorAll("#fitLog li")).map(li => li.textContent);
+  localStorage.setItem("fitLog", JSON.stringify(entries));
+}
+
+function saveFinance() {
+  const data = { income: totalIncome, expense: totalExpense };
+  localStorage.setItem("finance", JSON.stringify(data));
+}
+
+// 🔁 Загрузка
 function loadTasks() {
   const data = localStorage.getItem("tasks");
   if (data) {
@@ -183,18 +211,11 @@ function loadTasks() {
 }
 
 function loadPeople() {
-  const people = JSON.parse(localStorage.getItem("people") || "[]");
-  people.forEach(p => {
-    const temp = document.createElement("div");
-    temp.innerHTML = p;
-
-    const name = temp.textContent.split("—")[0].trim();
-    const statusMatch = p.match(/class="(.*?)"/);
-    const status = statusMatch ? statusMatch[1] : "yellow";
-
-    const li = createPersonElement(name, status);
-    document.getElementById("peopleList").appendChild(li);
-  });
+  const raw = localStorage.getItem("people");
+  if (raw) {
+    people = JSON.parse(raw);
+    renderPeople();
+  }
 }
 
 function loadWorkouts() {
@@ -216,15 +237,15 @@ function loadFinance() {
     const { income, expense } = JSON.parse(data);
     totalIncome = income;
     totalExpense = expense;
-    addFinance(); // отрисовка
+    addFinance();
   }
 }
 
 // 🔁 Инициализация
 window.addEventListener("DOMContentLoaded", () => {
+  getRule();
   loadTasks();
   loadPeople();
   loadWorkouts();
   loadFinance();
-  getRule();
 });
