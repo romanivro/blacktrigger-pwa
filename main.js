@@ -446,3 +446,24 @@ function importData() {
 
   reader.readAsText(file);
 }
+// ⏰ Напоминания
+function scheduleReminder(hour, minute, message) {
+  const now = new Date();
+  const target = new Date();
+  target.setHours(hour);
+  target.setMinutes(minute);
+  target.setSeconds(0);
+
+  if (target < now) target.setDate(target.getDate() + 1);
+  const delay = target.getTime() - now.getTime();
+
+  setTimeout(() => {
+    alert("🕑 Напоминание: " + message);
+    scheduleReminder(hour, minute, message); // повтор
+  }, delay);
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  scheduleReminder(8, 0, "Составь план на день");
+  scheduleReminder(21, 0, "Проверь прогресс и цели");
+});
