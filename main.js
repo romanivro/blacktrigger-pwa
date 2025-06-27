@@ -688,5 +688,12 @@ function runRecon() {
 }
 
 window.addEventListener("DOMContentLoaded", () => {
-  setTimeout(runRecon, 1500); // запустить после загрузки окружения
+  loadTasks();
+  loadPeople();
+  loadWorkouts();
+  loadFinance();
+  loadReminders();
+  getRule();
+  setTimeout(checkAlerts, 1000);
+  setTimeout(runRecon, 1500);
 });
