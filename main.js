@@ -40,10 +40,27 @@ function addPerson() {
   if (name) {
     const li = document.createElement("li");
     li.innerHTML = `${name} — <span class="${status}">${status.toUpperCase()}</span>`;
+
+    const btn = document.createElement("button");
+    btn.textContent = "❌";
+    btn.style.marginLeft = "10px";
+    btn.onclick = () => {
+      li.remove();
+      saveLog("Удалён человек: " + name);
+      updatePeopleStorage(); // синхронизируем localStorage
+    };
+
+    li.appendChild(btn);
     document.getElementById("peopleList").appendChild(li);
     saveLog("Добавлен человек: " + name + " (" + status + ")");
     document.getElementById("personName").value = "";
+    updatePeopleStorage();
   }
+}
+
+function updatePeopleStorage() {
+  const items = Array.from(document.querySelectorAll("#peopleList li")).map(li => li.innerHTML);
+  localStorage.setItem("people", JSON.stringify(items));
 }
 
 // 🧠 Лог
