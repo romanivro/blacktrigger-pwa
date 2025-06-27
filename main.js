@@ -251,22 +251,22 @@ window.addEventListener("DOMContentLoaded", () => {
   // ... другие загрузки
 
   const people = JSON.parse(localStorage.getItem("people") || "[]");
-  people.forEach(p => {
-    const li = document.createElement("li");
-    li.innerHTML = p;
+people.forEach(p => {
+  const li = document.createElement("li");
+  li.innerHTML = p.split("❌")[0]; // удаляем лишнюю кнопку, если осталась
 
-    const btn = document.createElement("button");
-    btn.textContent = "❌";
-    btn.style.marginLeft = "10px";
-    btn.onclick = () => {
-      li.remove();
-      saveLog("Удалён человек (из хранилища): " + li.textContent);
-      updatePeopleStorage();
-    };
+  const btn = document.createElement("button");
+  btn.textContent = "❌";
+  btn.style.marginLeft = "10px";
+  btn.onclick = () => {
+    li.remove();
+    saveLog("Удалён человек (из хранилища): " + li.textContent);
+    updatePeopleStorage();
+  };
 
-    li.appendChild(btn);
-    document.getElementById("peopleList").appendChild(li);
-  });
+  li.appendChild(btn);
+  document.getElementById("peopleList").appendChild(li);
+});
 });
 
 window.addEventListener("DOMContentLoaded", () => {
