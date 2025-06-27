@@ -404,3 +404,45 @@ function checkAlerts() {
 window.addEventListener("DOMContentLoaded", () => {
   setTimeout(checkAlerts, 1000); // анализ после загрузки
 });
+// 💾 Экспорт и импорт данных
+function exportData() {
+  const data = {
+    tasks: localStorage.getItem("tasks"),
+    people: localStorage.getItem("people"),
+    fitLog: localStorage.getItem("fitLog"),
+    finance: localStorage.getItem("finance"),
+    goals: document.getElementById("strategyList").innerHTML
+  };
+
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "blacktrigger-backup.json";
+  a.click();
+
+  URL.revokeObjectURL(url);
+  saveLog("Экспорт выполнен.");
+}
+
+function importData() {
+  const fileInput = document.getElementById("importFile");
+  const file = fileInput.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    const data = JSON.parse(e.target.result);
+
+    if (data.tasks) localStorage.setItem("tasks", data.tasks);
+    if (data.people) localStorage.setItem("people", data.people);
+    if (data.fitLog) localStorage.setItem("fitLog", data.fitLog);
+    if (data.finance) localStorage.setItem("finance", data.finance);
+    if (data.goals) document.getElementById("strategyList").innerHTML = data.goals;
+
+    location.reload();
+  };
+
+  reader.readAsText(file);
+}
