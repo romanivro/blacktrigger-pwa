@@ -191,14 +191,23 @@ function savePeople() {
 }
 
 function loadPeople() {
-  const data = localStorage.getItem("people");
-  if (data) {
-    const people = JSON.parse(data);
-    people.forEach(p => {
-      const li = document.createElement("li");
-      li.innerHTML = p;
-      document.getElementById("peopleList").appendChild(li);
-    });
+  const people = JSON.parse(localStorage.getItem("people") || "[]");
+people.forEach(p => {
+  const li = document.createElement("li");
+  li.innerHTML = p;
+
+  const btn = document.createElement("button");
+  btn.textContent = "❌";
+  btn.style.marginLeft = "10px";
+  btn.onclick = () => {
+    li.remove();
+    saveLog("Удалён человек: " + li.textContent);
+    updatePeopleStorage();
+  };
+
+  li.appendChild(btn);
+  document.getElementById("peopleList").appendChild(li);
+});
   }
 }
 
