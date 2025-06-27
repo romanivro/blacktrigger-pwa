@@ -50,7 +50,7 @@ function addPerson() {
       updatePeopleStorage(); // синхронизируем localStorage
     };
 
-    li.appendChild(btn);
+    li.appendChild(btn); // ← Это добавляет кнопку в элемент
     document.getElementById("peopleList").appendChild(li);
     saveLog("Добавлен человек: " + name + " (" + status + ")");
     document.getElementById("personName").value = "";
