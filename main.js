@@ -17,7 +17,11 @@ function getRule() {
   document.getElementById("rule").textContent = rules[index];
 }
 
-document.addEventListener("DOMContentLoaded", getRule);
+// 🧠 Лог
+function saveLog(entry) {
+  const now = new Date().toLocaleString();
+  console.log(`[LOG] ${now} — ${entry}`);
+}
 
 // 📋 План на день
 function addTask() {
@@ -33,26 +37,31 @@ function addTask() {
 }
 
 // 👥 Окружение
+function createPersonElement(name, status) {
+  const li = document.createElement("li");
+  li.innerHTML = `${name} — <span class="${status}">${status.toUpperCase()}</span>`;
+
+  const btn = document.createElement("button");
+  btn.textContent = "❌";
+  btn.style.marginLeft = "10px";
+  btn.onclick = () => {
+    li.remove();
+    saveLog("Удалён человек: " + name);
+    updatePeopleStorage();
+  };
+
+  li.appendChild(btn);
+  return li;
+}
+
 function addPerson() {
   const name = document.getElementById("personName").value.trim();
   const status = document.getElementById("personStatus").value;
   if (name) {
-    const li = document.createElement("li");
-    li.innerHTML = `${name} — <span class="${status}">${status.toUpperCase()}</span>`;
-
-    const btn = document.createElement("button");
-    btn.textContent = "❌";
-    btn.style.marginLeft = "10px";
-    btn.onclick = () => {
-      li.remove();
-      saveLog("Удалён человек: " + name);
-      updatePeopleStorage();
-    };
-
-    li.appendChild(btn);
+    const li = createPersonElement(name, status);
     document.getElementById("peopleList").appendChild(li);
-    saveLog("Добавлен человек: " + name + " (" + status + ")");
     document.getElementById("personName").value = "";
+    saveLog("Добавлен человек: " + name + " (" + status + ")");
     updatePeopleStorage();
   }
 }
@@ -60,12 +69,6 @@ function addPerson() {
 function updatePeopleStorage() {
   const items = Array.from(document.querySelectorAll("#peopleList li")).map(li => li.innerHTML);
   localStorage.setItem("people", JSON.stringify(items));
-}
-
-// 🧠 Лог
-function saveLog(entry) {
-  const now = new Date().toLocaleString();
-  console.log(`[LOG] ${now} — ${entry}`);
 }
 
 // 💰 Финансы
@@ -166,27 +169,7 @@ function updateFitChart() {
   });
 }
 
-// ✅ Сохранение / Загрузка
-function loadPeople() {
-  const people = JSON.parse(localStorage.getItem("people") || "[]");
-  people.forEach(p => {
-    const li = document.createElement("li");
-    li.innerHTML = p;
-
-    const btn = document.createElement("button");
-    btn.textContent = "❌";
-    btn.style.marginLeft = "10px";
-    btn.onclick = () => {
-      li.remove();
-      saveLog("Удалён человек: " + li.textContent);
-      updatePeopleStorage();
-    };
-
-    li.appendChild(btn);
-    document.getElementById("peopleList").appendChild(li);
-  });
-}
-
+// ✅ Загрузка
 function loadTasks() {
   const data = localStorage.getItem("tasks");
   if (data) {
@@ -197,6 +180,21 @@ function loadTasks() {
       document.getElementById("taskList").appendChild(li);
     });
   }
+}
+
+function loadPeople() {
+  const people = JSON.parse(localStorage.getItem("people") || "[]");
+  people.forEach(p => {
+    const temp = document.createElement("div");
+    temp.innerHTML = p;
+
+    const name = temp.textContent.split("—")[0].trim();
+    const statusMatch = p.match(/class="(.*?)"/);
+    const status = statusMatch ? statusMatch[1] : "yellow";
+
+    const li = createPersonElement(name, status);
+    document.getElementById("peopleList").appendChild(li);
+  });
 }
 
 function loadWorkouts() {
@@ -218,79 +216,15 @@ function loadFinance() {
     const { income, expense } = JSON.parse(data);
     totalIncome = income;
     totalExpense = expense;
-    addFinance();
+    addFinance(); // отрисовка
   }
 }
 
-
-});
-function fixPeopleData() {
-  const people = JSON.parse(localStorage.getItem("people") || "[]");
-  const fixed = [];
-
-  people.forEach(p => {
-    if (p.includes("❌")) {
-      fixed.push(p);
-    } else {
-      const li = document.createElement("li");
-      li.innerHTML = p;
-
-      const btn = document.createElement("button");
-      btn.textContent = "❌";
-      btn.style.marginLeft = "10px";
-      btn.onclick = () => {
-        li.remove();
-        saveLog("Удалён человек: " + li.textContent);
-        updatePeopleStorage();
-      };
-
-      li.appendChild(btn);
-      fixed.push(li.innerHTML);
-    }
-  });
-
-  localStorage.setItem("people", JSON.stringify(fixed));
-  location.reload();
-}
-function fixPeopleData() {
-  const people = JSON.parse(localStorage.getItem("people") || "[]");
-  const fixed = [];
-
-  people.forEach(p => {
-    // Если ❌ уже есть, не трогаем
-    if (p.includes("❌")) {
-      fixed.push(p);
-    } else {
-      // Добавим кнопку удаления
-      const li = document.createElement("li");
-      li.innerHTML = p;
-
-      const btn = document.createElement("button");
-      btn.textContent = "❌";
-      btn.style.marginLeft = "10px";
-      btn.onclick = () => {
-        li.remove();
-        saveLog("Удалён человек: " + li.textContent);
-        updatePeopleStorage();
-      };
-
-      li.appendChild(btn);
-      fixed.push(li.innerHTML);
-    }
-  });
-
-  localStorage.setItem("people", JSON.stringify(fixed));
-}
-
-// ⏳ Гарантированный запуск
+// 🔁 Инициализация
 window.addEventListener("DOMContentLoaded", () => {
-  fixPeopleData();
   loadTasks();
   loadPeople();
   loadWorkouts();
   loadFinance();
-  loadReminders();
   getRule();
-  setTimeout(checkAlerts, 1000);
-  setTimeout(runRecon, 1500);
 });
