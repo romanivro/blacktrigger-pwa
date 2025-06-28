@@ -1,74 +1,16 @@
-// 👥 Окружение
+// js/people.js — Управление окружением
 
-function createPersonElement(name, status, tags = []) {
-  const li = document.createElement("li");
-  li.className = "person-entry";
+import { saveLog } from "../core/log.js";
 
-  // Статус
-  const statusLabel = `<span class="${status}">${status.toUpperCase()}</span>`;
+export function createPersonElement(name, status) { const li = document.createElement("li"); li.innerHTML = ${name} — <span class="${status}">${status.toUpperCase()}</span>;
 
-  // Метки
-  const tagSpans = tags.map(t => `<span class="tag">${t}</span>`).join(" ");
-  li.innerHTML = `${name} — ${statusLabel} ${tagSpans}`;
+const btn = document.createElement("button"); btn.textContent = "❌"; btn.style.marginLeft = "10px"; btn.onclick = () => { li.remove(); saveLog("Удалён человек: " + name); updatePeopleStorage(); };
 
-  // Удаление
-  const delBtn = document.createElement("button");
-  delBtn.textContent = "❌";
-  delBtn.className = "delete-btn";
-  delBtn.onclick = () => {
-    li.remove();
-    saveLog("Удалён человек: " + name);
-    updatePeopleStorage();
-  };
+li.appendChild(btn); return li; }
 
-  li.appendChild(delBtn);
-  return li;
-}
+export function addPerson() { const name = document.getElementById("personName").value.trim(); const status = document.getElementById("personStatus").value; if (name) { const li = createPersonElement(name, status); document.getElementById("peopleList").appendChild(li); document.getElementById("personName").value = ""; saveLog("Добавлен человек: " + name + " (" + status + ")"); updatePeopleStorage(); } }
 
-function addPerson() {
-  const name = document.getElementById("personName").value.trim();
-  const status = document.getElementById("personStatus").value;
+export function updatePeopleStorage() { const items = Array.from(document.querySelectorAll("#peopleList li")) .map(li => li.innerHTML); localStorage.setItem("people", JSON.stringify(items)); }
 
-  if (!name) return;
+export function loadPeople() { const people = JSON.parse(localStorage.getItem("people") || "[]"); people.forEach(p => { const temp = document.createElement("div"); temp.innerHTML = p; const name = temp.textContent.split("\u2014")[0].trim(); const statusMatch = p.match(/class="(.*?)"/); const status = statusMatch ? statusMatch[1] : "yellow"; const li = createPersonElement(name, status); document.getElementById("peopleList").appendChild(li); }); }
 
-  // Метки
-  const tags = [];
-  if (document.getElementById("tagResource").checked) tags.push("💰 Ресурс");
-  if (document.getElementById("tagBallast").checked) tags.push("🪨 Балласт");
-  if (document.getElementById("tagWeak").checked) tags.push("🧠 Слабый");
-  if (document.getElementById("tagReligious").checked) tags.push("✝️ Религиозный");
-
-  const li = createPersonElement(name, status, tags);
-  document.getElementById("peopleList").appendChild(li);
-
-  saveLog(`Добавлен человек: ${name} (${status}), метки: ${tags.join(", ") || "—"}`);
-  document.getElementById("personName").value = "";
-  document.querySelectorAll(".tag-checkbox").forEach(c => (c.checked = false));
-
-  updatePeopleStorage();
-}
-
-function updatePeopleStorage() {
-  const entries = Array.from(document.querySelectorAll("#peopleList li")).map(li => li.innerHTML);
-  localStorage.setItem("people", JSON.stringify(entries));
-}
-
-function loadPeople() {
-  const data = JSON.parse(localStorage.getItem("people") || "[]");
-  data.forEach(p => {
-    const li = document.createElement("li");
-    li.innerHTML = p;
-
-    const delBtn = document.createElement("button");
-    delBtn.textContent = "❌";
-    delBtn.className = "delete-btn";
-    delBtn.onclick = () => {
-      li.remove();
-      saveLog("Удалён человек: " + li.textContent);
-      updatePeopleStorage();
-    };
-
-    li.appendChild(delBtn);
-    document.getElementById("peopleList").appendChild(li);
-  });
-}
