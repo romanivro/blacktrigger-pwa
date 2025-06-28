@@ -25,4 +25,4 @@ function updatePeopleStorage() { const items = Array.from(document.querySelector
 function loadPeople() { const people = JSON.parse(localStorage.getItem("people") || "[]"); people.forEach(p => { const temp = document.createElement("div"); temp.innerHTML = p; const name = temp.textContent.split("—")[0].trim(); const statusMatch = p.match(/class="(.*?)"/); const status = statusMatch ? statusMatch[1] : "yellow"; const li = createPersonElement(name, status); document.getElementById("peopleList").appendChild(li); }); }
 
 window.addEventListener("DOMContentLoaded", () => { getRule(); loadTasks(); loadPeople(); });
-
+import { saveLog, renderLog, updateActivityChart, toggleLogDisplay } from "./core/log.js";
