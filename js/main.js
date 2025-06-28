@@ -34,3 +34,10 @@ window.addReminder = addReminder;
 window.addEventListener("DOMContentLoaded", () => {
   loadReminders();
 });
+
+import { addGoal, loadStrategy } from "./core/strategy.js";
+window.addGoal = addGoal;
+
+window.addEventListener("DOMContentLoaded", () => {
+  loadStrategy();
+});
