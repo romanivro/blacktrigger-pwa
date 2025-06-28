@@ -41,3 +41,6 @@ window.addGoal = addGoal;
 window.addEventListener("DOMContentLoaded", () => {
   loadStrategy();
 });
+
+import { startTest } from "./core/archetype.js";
+window.startTest = startTest;
