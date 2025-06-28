@@ -26,3 +26,11 @@ function loadPeople() { const people = JSON.parse(localStorage.getItem("people")
 
 window.addEventListener("DOMContentLoaded", () => { getRule(); loadTasks(); loadPeople(); });
 import { saveLog, renderLog, updateActivityChart, toggleLogDisplay } from "./core/log.js";
+
+
+
+import { addReminder, loadReminders } from './core/reminder.js';
+window.addReminder = addReminder;
+window.addEventListener("DOMContentLoaded", () => {
+  loadReminders();
+});
