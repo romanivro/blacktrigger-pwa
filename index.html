@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BlackTrigger</title>
+  <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="css/style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -34,7 +35,7 @@
     <ul id="reminderList"></ul>
   </section>
 
-<!-- 👥 Окружение -->
+  <!-- 👥 Окружение -->
   <section id="people-block">
     <h2>👥 Окружение</h2>
     <input type="text" id="personName" placeholder="Имя или позывной" />
@@ -45,6 +46,14 @@
     </select>
     <button onclick="addPerson()">Добавить</button>
     <ul id="peopleList"></ul>
+
+    <!-- 🔖 Метки -->
+    <div class="tags">
+      <label><input type="checkbox" id="tagResource" class="tag-checkbox" /> 💰 Ресурс</label>
+      <label><input type="checkbox" id="tagBallast" class="tag-checkbox" /> 🪨 Балласт</label>
+      <label><input type="checkbox" id="tagWeak" class="tag-checkbox" /> 🧠 Слабый</label>
+      <label><input type="checkbox" id="tagReligious" class="tag-checkbox" /> ✝️ Религиозный</label>
+    </div>
   </section>
 
   <!-- 🏋️ Физо -->
@@ -91,53 +100,7 @@
     <canvas id="activityChart" width="400" height="150"></canvas>
   </section>
 
-  <!-- 🔁 Подключаем JS -->
-  <script src="js/rules.js"></script>
-  <script src="js/tasks.js"></script>
-  <script src="js/reminders.js"></script>
-  <script src="js/people.js"></script>
-  <script src="js/fitness.js"></script>
-  <script src="js/archetype.js"></script>
-  <script src="js/strategy.js"></script>
-  <script src="js/alerts.js"></script>
-  <script src="js/storage.js"></script>
-  <script src="js/main.js"></script>
-
-<div class="tags">
-  <label><input type="checkbox" id="tagResource" class="tag-checkbox" /> 💰 Ресурс</label>
-  <label><input type="checkbox" id="tagBallast" class="tag-checkbox" /> 🪨 Балласт</label>
-  <label><input type="checkbox" id="tagWeak" class="tag-checkbox" /> 🧠 Слабый</label>
-  <label><input type="checkbox" id="tagReligious" class="tag-checkbox" /> ✝️ Религиозный</label>
-</div>
-<script src="core/log.js"></script>
-
-<section id="reminder-block">
-  <h2>⏰ Напоминания</h2>
-  <input type="time" id="reminderTime" />
-  <input type="text" id="reminderText" placeholder="Текст напоминания" />
-  <button onclick="addReminder()">Добавить</button>
-  <ul id="reminderList"></ul>
-</section>
-
-<section id="strategy-block">
-  <h2>🗺️ Карта стратегии</h2>
-  <input type="text" id="goalInput" placeholder="Цель..." />
-  <select id="goalType">
-    <option value="short">Краткосрочная</option>
-    <option value="long">Долгосрочная</option>
-    <option value="tactical">Ситуативная</option>
-  </select>
-  <button onclick="addGoal()">Добавить</button>
-  <ul id="strategyList"></ul>
-</section>
-
-<section id="test-block">
-  <h2>🧠 Архетип</h2>
-  <div id="quiz"></div>
-  <button onclick="startTest()">Пройти тест</button>
-  <div id="result"></div>
-</section>
+  <!-- 🔁 Подключение скриптов -->
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
-
-
