@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>BlackTrigger</title>
-  <link rel="manifest" href="manifest.json" />
-  <link rel="stylesheet" href="css/style.css" /><script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <h1>BlackTrigger</h1>
@@ -25,84 +25,11 @@
     <ul id="taskList"></ul>
   </section>
 
-  <!-- 👥 Окружение -->
-  <section id="env-block">
-    <h2>👥 Окружение</h2>
-    <input type="text" id="personName" placeholder="Имя или позывной" />
-    <select id="personStatus">
-      <option value="green">🟢 Лояльный</option>
-      <option value="yellow">🟡 Нейтрал</option>
-      <option value="red">🔴 Враг</option>
-    </select>
-    <button onclick="addPerson()">Добавить</button>
-    <ul id="peopleList"></ul>
+  <!-- ⏰ Напоминания -->
+  <section id="reminder-block">
+    <h2>⏰ Напоминания</h2>
+    <input type="time" id="reminderTime" />
+    <input type="text" id="reminderText" placeholder="Что напомнить?" />
+    <button onclick="addReminder()">Добавить</button>
+    <ul id="reminderList"></ul>
   </section>
-
-  <!-- 💰 Финансы -->
-  <section id="finance-block">
-    <h2>💰 Финансы</h2>
-    <input type="number" id="income" placeholder="Доход +" />
-    <input type="number" id="expense" placeholder="Расход -" />
-    <button onclick="addFinance()">Сохранить</button>
-    <div id="financeStats"></div>
-  </section>
-
-  <!-- 🏋️ Физо -->
-  <section id="fit-block">
-    <h2>🏋️ Физо</h2>
-    <input type="text" id="exercise" placeholder="Тип (турник, бег...)" />
-    <input type="number" id="amount" placeholder="Количество / время" />
-    <button onclick="addWorkout()">Записать</button>
-    <ul id="fitLog"></ul>
-  </section> <!-- 📊 График физо -->
-<section id="fit-chart-block">
-  <h2>📊 Прогресс физо</h2>
-  <canvas id="fitChart" width="400" height="200"></canvas>
-</section>
-
-  <script src="js/main.js"></script><!-- 🧠 Самоанализ -->
-<section id="test-block">
-  <h2>🧠 Архетип</h2>
-  <div id="quiz"></div>
-  <button onclick="startTest()">Пройти тест</button>
-  <div id="result"></div>
-</section><!-- 🗺️ Карта стратегии -->
-<section id="strategy-block">
-  <h2>🗺️ Карта стратегии</h2>
-  <input type="text" id="goalInput" placeholder="Цель..." />
-  <select id="goalType">
-    <option value="short">Краткосрочная</option>
-    <option value="long">Долгосрочная</option>
-    <option value="tactical">Ситуативная</option>
-  </select>
-  <button onclick="addGoal()">Добавить</button>
-  <ul id="strategyList"></ul>
-</section><!-- ⚠️ Система сигналов -->
-<section id="alerts">
-  <h2>⚠️ Подсказки системы</h2>
-  <ul id="alertList"></ul>
-</section><!-- 💾 Резерв и экспорт -->
-<section id="backup-block">
-  <h2>💾 Резервная копия</h2>
-  <button onclick="exportData()">Экспорт</button>
-  <input type="file" id="importFile" accept=".json" />
-  <button onclick="importData()">Импорт</button>
-</section>
-<!-- ⏰ Напоминания -->
-<section id="reminder-block">
-  <h2>⏰ Напоминания</h2>
-  <input type="time" id="reminderTime" />
-  <input type="text" id="reminderText" placeholder="Текст напоминания..." />
-  <button onclick="addReminder()">Добавить</button>
-  <ul id="reminderList"></ul>
-</section>
-<!-- 📚 Лог активности -->
-<section id="log-block">
-  <h2>📚 Лог действий</h2>
-  <button onclick="toggleLog()">Показать / скрыть</button>
-  <ul id="logList" style="display:none;"></ul>
-  <canvas id="activityChart" width="400" height="200"></canvas>
-</section>
-<script src="js/fit.js"></script>
-</body>
-</html>
