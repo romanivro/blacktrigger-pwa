@@ -1,18 +1,78 @@
-// 🧠 Файл: core/log.js — управление логом действий
+// core/log.js
 
-function saveLog(entry) { const now = new Date().toLocaleString(); const log = JSON.parse(localStorage.getItem("activityLog") || "[]"); log.push({ time: now, entry }); localStorage.setItem("activityLog", JSON.stringify(log)); }
+export function saveLog(entry) {
+  const now = new Date();
+  const timestamp = now.toLocaleString();
+  const log = JSON.parse(localStorage.getItem("activityLog") || "[]");
+  log.push({ time: timestamp, entry });
+  localStorage.setItem("activityLog", JSON.stringify(log));
+}
 
-function toggleLog() { const logList = document.getElementById("logList"); logList.style.display = logList.style.display === "none" ? "block" : "none"; renderLog(); updateActivityChart(); }
+export function renderLog() {
+  const logList = document.getElementById("logList");
+  if (!logList) return;
 
-function renderLog() { const logList = document.getElementById("logList"); logList.innerHTML = ""; const log = JSON.parse(localStorage.getItem("activityLog") || "[]").reverse(); log.forEach(item => { const li = document.createElement("li"); li.textContent = ${item.time} — ${item.entry}; logList.appendChild(li); }); }
+  logList.innerHTML = "";
+  const log = JSON.parse(localStorage.getItem("activityLog") || "[]").reverse();
+  log.forEach(item => {
+    const li = document.createElement("li");
+    li.textContent = `${item.time} — ${item.entry}`;
+    logList.appendChild(li);
+  });
+}
 
-function updateActivityChart() { const raw = JSON.parse(localStorage.getItem("activityLog") || "[]"); const map = {};
+export function updateActivityChart() {
+  const raw = JSON.parse(localStorage.getItem("activityLog") || "[]");
+  const map = {};
 
-raw.forEach(item => { const date = item.time.split(",")[0]; map[date] = (map[date] || 0) + 1; });
+  raw.forEach(item => {
+    const date = item.time.split(",")[0];
+    map[date] = (map[date] || 0) + 1;
+  });
 
-const labels = Object.keys(map); const values = Object.values(map);
+  const labels = Object.keys(map);
+  const values = Object.values(map);
 
-if (window.activityChart) window.activityChart.destroy();
+  if (window.activityChart) {
+    window.activityChart.destroy();
+  }
 
-const ctx = document.getElementById("activityChart").getContext("2d"); window.activityChart = new Chart(ctx, { type: "line", data: { labels: labels, datasets: [{ label: "Активность (действий в день)", data: values, fill: false, borderColor: "#0f0", tension: 0.2 }] }, options: { scales: { y: { beginAtZero: true, ticks: { color: "#0f0" }, grid: { color: "#333" } }, x: { ticks: { color: "#0f0" }, grid: { color: "#333" } } }, plugins: { legend: { display: false } } } }); }
+  const ctx = document.getElementById("activityChart").getContext("2d");
+  window.activityChart = new Chart(ctx, {
+    type: "line",
+    data: {
+      labels,
+      datasets: [{
+        label: "Активность (действий в день)",
+        data: values,
+        fill: false,
+        borderColor: "#0f0",
+        tension: 0.2
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { color: "#0f0" },
+          grid: { color: "#333" }
+        },
+        x: {
+          ticks: { color: "#0f0" },
+          grid: { color: "#333" }
+        }
+      },
+      plugins: {
+        legend: { display: false }
+      }
+    }
+  });
+}
 
+export function toggleLogDisplay() {
+  const logList = document.getElementById("logList");
+  if (!logList) return;
+  logList.style.display = logList.style.display === "none" ? "block" : "none";
+  renderLog();
+  updateActivityChart();
+}
