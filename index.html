@@ -110,6 +110,14 @@
   <label><input type="checkbox" id="tagReligious" class="tag-checkbox" /> ✝️ Религиозный</label>
 </div>
 <script src="core/log.js"></script>
+
+<section id="reminder-block">
+  <h2>⏰ Напоминания</h2>
+  <input type="time" id="reminderTime" />
+  <input type="text" id="reminderText" placeholder="Текст напоминания" />
+  <button onclick="addReminder()">Добавить</button>
+  <ul id="reminderList"></ul>
+</section>
 </body>
 </html>
 
