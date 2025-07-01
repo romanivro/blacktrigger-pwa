@@ -16,3 +16,13 @@
 
 // ------------------------- 🚀 INIT ------------------------- window.addEventListener("DOMContentLoaded", () => { getRule(); loadTasks(); loadPeople(); renderReminders(); renderFit(); updateFitChart(); renderLog(); document.getElementById("userState").value = localStorage.getItem("state") || "focus"; });
 
+import { getRule } from './js/rules.js';
+import { addTask, loadTasks } from './js/tasks.js';
+import { addReminder, loadReminders } from './js/reminders.js';
+import { addPerson, loadPeople } from './js/people.js';
+import { addWorkout, updateFitChart, loadWorkouts } from './js/fit.js';
+import { startTest } from './js/archetype.js';
+import { addGoal, loadStrategy } from './js/strategy.js';
+import { toggleLog, saveLog, renderLog, updateActivityChart, loadLog } from './js/log.js';
+import { setState, loadState } from './js/state.js';
+import { checkAlerts } from './js/alerts.js';
