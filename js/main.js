@@ -1,33 +1,18 @@
-// main.js — подключение всех модулей
+// main.js — Монолитная версия BlackTrigger
 
-import { getRule } from "./js/rules.js";
-import { addTask, loadTasks } from "./js/tasks.js";
-import { addReminder, loadReminders } from "./js/reminders.js";
-import { addPerson, loadPeople } from "./js/people.js";
-import { addWorkout, loadWorkouts, renderFitChart } from "./js/fitness.js";
-import { startTest } from "./js/archetype.js";
-import { addGoal, loadStrategy } from "./js/strategy.js";
-import { toggleLog, loadLogData } from "./js/log.js";
-import { loadState, setState } from "./js/state.js";
+// ------------------------- 📜 Правила дня ------------------------- const rules = [ "Не оправдывайся — объяснение без запроса — слабость.", "Если не приносит ресурс — отсекай.", "Хищник молчит чаще, чем говорит.", "Контроль над собой — контроль над всем.", "Каждое взаимодействие — война за интересы.", "Грубость — фильтр. Кто слаб — отпадёт сам.", "Сначала доминируй, потом дружи.", "Если не давят на тебя — дави ты.", "Ложь — инструмент, не слабость.", "Правильное ≠ выгодное. Выбирай выгоду." ]; function getRule() { const index = Math.floor(Math.random() * rules.length); document.getElementById("rule").textContent = rules[index]; }
 
-// Глобальные функции
-window.addTask = addTask;
-window.addReminder = addReminder;
-window.addPerson = addPerson;
-window.addWorkout = addWorkout;
-window.startTest = startTest;
-window.addGoal = addGoal;
-window.toggleLog = toggleLog;
-window.setState = setState;
+// ------------------------- 🧠 Лог ------------------------- function saveLog(entry) { const now = new Date().toLocaleString(); const full = [${now}] ${entry}; const logList = JSON.parse(localStorage.getItem("log") || "[]"); logList.push(full); localStorage.setItem("log", JSON.stringify(logList)); renderLog(); } function renderLog() { const logList = JSON.parse(localStorage.getItem("log") || "[]"); const ul = document.getElementById("logList"); if (!ul) return; ul.innerHTML = ""; logList.slice(-30).forEach(entry => { const li = document.createElement("li"); li.textContent = entry; ul.appendChild(li); }); } function toggleLog() { const list = document.getElementById("logList"); list.style.display = list.style.display === "none" ? "block" : "none"; }
 
-window.addEventListener("DOMContentLoaded", () => {
-  getRule();
-  loadTasks();
-  loadReminders();
-  loadPeople();
-  loadWorkouts();
-  renderFitChart();
-  loadStrategy();
-  loadLogData();
-  loadState();
-});
+// ------------------------- 📋 План ------------------------- function addTask() { const input = document.getElementById("taskInput"); const value = input.value.trim(); if (value) { const li = document.createElement("li"); li.textContent = value; li.onclick = () => li.classList.toggle("done"); document.getElementById("taskList").appendChild(li); input.value = ""; saveLog(Задача: ${value}); saveTasks(); } } function saveTasks() { const tasks = Array.from(document.querySelectorAll("#taskList li")).map(li => ({ text: li.textContent, done: li.classList.contains("done") })); localStorage.setItem("tasks", JSON.stringify(tasks)); } function loadTasks() { const data = JSON.parse(localStorage.getItem("tasks") || "[]"); const ul = document.getElementById("taskList"); ul.innerHTML = ""; data.forEach(task => { const li = document.createElement("li"); li.textContent = task.text; if (task.done) li.classList.add("done"); li.onclick = () => { li.classList.toggle("done"); saveTasks(); }; ul.appendChild(li); }); }
+
+// ------------------------- ⏰ Напоминания ------------------------- function addReminder() { const time = document.getElementById("reminderTime").value; const text = document.getElementById("reminderText").value.trim(); if (time && text) { const reminders = JSON.parse(localStorage.getItem("reminders") || "[]"); reminders.push({ time, text }); localStorage.setItem("reminders", JSON.stringify(reminders)); renderReminders(); saveLog(Напоминание: ${text} (${time})); } } function renderReminders() { const ul = document.getElementById("reminderList"); ul.innerHTML = ""; const data = JSON.parse(localStorage.getItem("reminders") || "[]"); data.forEach(({ time, text }) => { const li = document.createElement("li"); li.textContent = ${time} — ${text}; ul.appendChild(li); }); }
+
+// ------------------------- 👥 Окружение ------------------------- function addPerson() { const name = document.getElementById("personName").value.trim(); const status = document.getElementById("personStatus").value; if (name) { const li = document.createElement("li"); li.innerHTML = ${name} — <span class="${status}">${status.toUpperCase()}</span>; const btn = document.createElement("button"); btn.textContent = "❌"; btn.onclick = () => { li.remove(); savePeople(); saveLog(Удалён человек: ${name}); }; li.appendChild(btn); document.getElementById("peopleList").appendChild(li); savePeople(); saveLog(Добавлен: ${name} (${status})); } } function savePeople() { const items = Array.from(document.querySelectorAll("#peopleList li")).map(li => li.innerHTML); localStorage.setItem("people", JSON.stringify(items)); } function loadPeople() { const ul = document.getElementById("peopleList"); ul.innerHTML = ""; const items = JSON.parse(localStorage.getItem("people") || "[]"); items.forEach(html => { const div = document.createElement("div"); div.innerHTML = html; ul.appendChild(div.firstChild); }); }
+
+// ------------------------- 🏋️ Физо ------------------------- function addWorkout() { const exercise = document.getElementById("exercise").value.trim(); const amount = parseFloat(document.getElementById("amount").value); if (exercise && !isNaN(amount)) { const logs = JSON.parse(localStorage.getItem("fit") || "[]"); logs.push({ exercise, amount }); localStorage.setItem("fit", JSON.stringify(logs)); renderFit(); updateFitChart(); saveLog(Физо: ${exercise} — ${amount}); } } function renderFit() { const ul = document.getElementById("fitLog"); ul.innerHTML = ""; const logs = JSON.parse(localStorage.getItem("fit") || "[]"); logs.forEach(log => { const li = document.createElement("li"); li.textContent = ${log.exercise}: ${log.amount}; ul.appendChild(li); }); } let fitChart; function updateFitChart() { const logs = JSON.parse(localStorage.getItem("fit") || "[]"); const dataMap = {}; logs.forEach(({ exercise, amount }) => { dataMap[exercise] = (dataMap[exercise] || 0) + amount; }); const ctx = document.getElementById("fitChart").getContext("2d"); if (fitChart) fitChart.destroy(); fitChart = new Chart(ctx, { type: "bar", data: { labels: Object.keys(dataMap), datasets: [{ data: Object.values(dataMap), backgroundColor: "#0f0", }] }, options: { plugins: { legend: { display: false } }, scales: { x: { ticks: { color: "#0f0" } }, y: { ticks: { color: "#0f0" }, beginAtZero: true } } } }); }
+
+// ------------------------- 📌 Состояние ------------------------- function setState() { const state = document.getElementById("userState").value; localStorage.setItem("state", state); saveLog(Состояние: ${state}); }
+
+// ------------------------- 🚀 INIT ------------------------- window.addEventListener("DOMContentLoaded", () => { getRule(); loadTasks(); loadPeople(); renderReminders(); renderFit(); updateFitChart(); renderLog(); document.getElementById("userState").value = localStorage.getItem("state") || "focus"; });
+
