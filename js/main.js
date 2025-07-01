@@ -1,14 +1,14 @@
-import { getRule } from './core/rules.js';
-import { addTask, loadTasks } from './core/tasks.js';
-import { addReminder, loadReminders } from './core/reminder.js';
-import { addPerson, loadPeople } from './core/people.js';
-import { addWorkout, loadWorkouts, renderFitChart } from './core/fit.js';
-import { startTest } from './core/archetype.js';
-import { addGoal, loadStrategy } from './core/strategy.js';
-import { saveLog, toggleLog, loadLog, renderActivityChart } from './core/log.js';
-import { setState, loadState } from './core/state.js';
+import { getRule } from './rules.js';
+import { addTask, loadTasks } from './tasks.js';
+import { addReminder, loadReminders } from './reminder.js';
+import { addPerson, loadPeople } from './people.js';
+import { addWorkout, loadWorkouts, renderFitChart } from './fit.js';
+import { startTest } from './archetype.js';
+import { addGoal, loadStrategy } from './strategy.js';
+import { saveLog, toggleLog, loadLog, renderActivityChart } from './log.js';
+import { setState, loadState } from './state.js';
 
-// 📜 Глобальный доступ для кнопок
+// 📜 Делаем кнопки доступными
 window.getRule = getRule;
 window.addTask = addTask;
 window.addReminder = addReminder;
