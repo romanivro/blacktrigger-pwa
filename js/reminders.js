@@ -1,9 +1,10 @@
-// Файл: js/reminders.js
+// js/reminders.js — работа с напоминаниями
+
+import { saveLog } from "./log.js";
 
 export function addReminder() {
   const time = document.getElementById("reminderTime").value;
   const text = document.getElementById("reminderText").value.trim();
-
   if (!time || !text) return;
 
   const reminder = { time, text };
@@ -13,8 +14,7 @@ export function addReminder() {
 
   renderReminders();
   scheduleReminder(reminder);
-
-  saveLog("Напоминание добавлено: " + time + " — " + text);
+  saveLog(`Добавлено напоминание: ${time} — ${text}`);
 
   document.getElementById("reminderTime").value = "";
   document.getElementById("reminderText").value = "";
@@ -23,12 +23,11 @@ export function addReminder() {
 export function renderReminders() {
   const list = document.getElementById("reminderList");
   list.innerHTML = "";
-  const reminders = JSON.parse(localStorage.getItem("reminders") || "[]");
 
+  const reminders = JSON.parse(localStorage.getItem("reminders") || "[]");
   reminders.forEach((r, i) => {
     const li = document.createElement("li");
     li.textContent = `${r.time} — ${r.text}`;
-
     const btn = document.createElement("button");
     btn.textContent = "❌";
     btn.onclick = () => {
@@ -36,7 +35,6 @@ export function renderReminders() {
       localStorage.setItem("reminders", JSON.stringify(reminders));
       renderReminders();
     };
-
     li.appendChild(btn);
     list.appendChild(li);
   });
@@ -47,7 +45,6 @@ export function scheduleReminder(reminder) {
   const [hour, minute] = reminder.time.split(":").map(Number);
   const target = new Date();
   target.setHours(hour, minute, 0, 0);
-
   if (target <= now) target.setDate(now.getDate() + 1);
   const delay = target - now;
 
