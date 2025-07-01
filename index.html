@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BlackTrigger — Штаб</title>
+  <title>BlackTrigger</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-  <h1>BlackTrigger — Боевой штаб</h1>
+  <h1>BlackTrigger — Штаб управления</h1>
 
   <!-- 📌 Состояние -->
   <section id="state-block">
@@ -25,13 +25,13 @@
   <!-- 📜 Правило дня -->
   <section id="rule-block">
     <h2>📜 Правило дня</h2>
-    <div id="rule">Загружается...</div>
-    <button onclick="getRule()">Следующее</button>
+    <div id="rule" class="rule">Загружается...</div>
+    <button onclick="getRule()">Следующее правило</button>
   </section>
 
-  <!-- 📋 План -->
+  <!-- 📋 План на день -->
   <section id="task-block">
-    <h2>📋 План на день</h2>
+    <h2>📋 План</h2>
     <input type="text" id="taskInput" placeholder="Задача..." />
     <button onclick="addTask()">Добавить</button>
     <ul id="taskList"></ul>
@@ -62,9 +62,9 @@
 
   <!-- 🏋️ Физо -->
   <section id="fit-block">
-    <h2>🏋️ Физо</h2>
+    <h2>🏋️‍♂️ Физо</h2>
     <input type="text" id="exercise" placeholder="Тип (бег, турник...)" />
-    <input type="number" id="amount" placeholder="Кол-во или время" />
+    <input type="number" id="amount" placeholder="Количество/время" />
     <button onclick="addWorkout()">Записать</button>
     <ul id="fitLog"></ul>
   </section>
@@ -96,15 +96,15 @@
     <ul id="strategyList"></ul>
   </section>
 
-  <!-- 📚 Лог -->
+  <!-- 📚 Лог активности -->
   <section id="log-block">
     <h2>📚 Лог</h2>
     <button onclick="toggleLog()">Показать/Скрыть</button>
-    <ul id="logList" style="display:none;"></ul>
+    <ul id="logList" style="display: none;"></ul>
     <canvas id="activityChart" width="400" height="150"></canvas>
   </section>
 
-  <!-- 🔁 Подключение JS -->
-  <script src="main.js"></script>
+  <!-- 🔁 Подключение модулей -->
+  <script type="module" src="./main.js"></script>
 </body>
 </html>
