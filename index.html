@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BlackTrigger</title>
+  <title>BlackTrigger — Штаб</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="style.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -29,9 +29,9 @@
     <button onclick="getRule()">Следующее правило</button>
   </section>
 
-  <!-- 📋 План на день -->
+  <!-- 📋 План -->
   <section id="task-block">
-    <h2>📋 План</h2>
+    <h2>📋 План на день</h2>
     <input type="text" id="taskInput" placeholder="Задача..." />
     <button onclick="addTask()">Добавить</button>
     <ul id="taskList"></ul>
@@ -49,7 +49,7 @@
   <!-- 👥 Окружение -->
   <section id="people-block">
     <h2>👥 Окружение</h2>
-    <input type="text" id="personName" placeholder="Имя или позывной" />
+    <input type="text" id="personName" placeholder="Имя / позывной" />
     <select id="personStatus">
       <option value="green">🟢 Лояльный</option>
       <option value="yellow">🟡 Нейтрал</option>
@@ -63,15 +63,15 @@
   <!-- 🏋️ Физо -->
   <section id="fit-block">
     <h2>🏋️‍♂️ Физо</h2>
-    <input type="text" id="exercise" placeholder="Тип (бег, турник...)" />
-    <input type="number" id="amount" placeholder="Количество/время" />
+    <input type="text" id="exercise" placeholder="Тип (бег, отжимания...)" />
+    <input type="number" id="amount" placeholder="Результат" />
     <button onclick="addWorkout()">Записать</button>
     <ul id="fitLog"></ul>
   </section>
 
-  <!-- 📊 График физо -->
+  <!-- 📊 График -->
   <section id="fit-chart-block">
-    <h2>📊 Прогресс физо</h2>
+    <h2>📊 График физо</h2>
     <canvas id="fitChart" width="400" height="200"></canvas>
   </section>
 
@@ -96,15 +96,15 @@
     <ul id="strategyList"></ul>
   </section>
 
-  <!-- 📚 Лог активности -->
+  <!-- 📈 Лог активности -->
   <section id="log-block">
-    <h2>📚 Лог</h2>
-    <button onclick="toggleLog()">Показать/Скрыть</button>
-    <ul id="logList" style="display: none;"></ul>
+    <h2>📈 Лог активности</h2>
+    <button onclick="toggleLog()">Показать / Скрыть</button>
+    <ul id="logList" style="display:none;"></ul>
     <canvas id="activityChart" width="400" height="150"></canvas>
   </section>
 
-  <!-- 🔁 Подключение модулей -->
-  <script type="module" src="./main.js"></script>
+  <!-- Подключение логики -->
+  <script type="module" src="js/main.js"></script>
 </body>
 </html>
