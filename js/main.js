@@ -1,55 +1,33 @@
-// === BlackTrigger: main.js ===
+// main.js — центральная сборка
 
-// 🧠 Логика логирования
-import { saveLog } from "../core/log.js";
+import { getRule } from "./js/rules.js";
+import { addTask, loadTasks } from "./js/tasks.js";
+import { addReminder, loadReminders } from "./js/reminders.js";
+import { addPerson, loadPeople } from "./js/people.js";
+import { addWorkout, loadWorkouts } from "./js/fitness.js";
+import { startTest } from "./js/archetype.js";
+import { addGoal, loadStrategy } from "./js/strategy.js";
+import { toggleLog, loadLog } from "./js/log.js";
+import { loadUserState, setState } from "./js/state.js";
 
-// 📜 Правила дня
-import { getRule } from "./rules.js";
-
-// 📋 План на день
-import { addTask, loadTasks } from "./tasks.js";
-
-// ⏰ Напоминания
-import { addReminder, loadReminders } from "../core/reminder.js";
-
-// 👥 Окружение
-import { addPerson, loadPeople } from "./people.js";
-
-// 🧠 Архетип
-import { startTest } from "../core/archetype.js";
-
-// 🗺️ Стратегия
-import { addGoal, loadStrategy } from "../core/strategy.js";
-
-// 🧭 Статус пользователя (фокус, усталость и т.д.)
-import { setState, loadState } from "../core/state.js";
-
-// 🏋️ Физо + график
-import { addWorkout, loadWorkouts, updateFitChart } from "./fitness.js";
-
-// 📚 Активность
-import { toggleLog, renderLog, updateActivityChart } from "../core/log.js";
-
-// === Доступ к функциям из HTML ===
+// Глобальный доступ
 window.addTask = addTask;
 window.addReminder = addReminder;
 window.addPerson = addPerson;
-window.startTest = startTest;
-window.addGoal = addGoal;
 window.addWorkout = addWorkout;
+window.addGoal = addGoal;
+window.startTest = startTest;
 window.toggleLog = toggleLog;
 window.setState = setState;
 
-// === Инициализация после загрузки ===
+// Инициализация при загрузке
 window.addEventListener("DOMContentLoaded", () => {
   getRule();
   loadTasks();
   loadReminders();
   loadPeople();
-  loadStrategy();
-  loadState();
   loadWorkouts();
-  updateFitChart();
-  renderLog();
-  updateActivityChart();
+  loadStrategy();
+  loadUserState();
+  loadLog();
 });
