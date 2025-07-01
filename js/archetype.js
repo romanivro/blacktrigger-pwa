@@ -1,6 +1,8 @@
-// js/archetype.js — тест на архетип и ролевую модель
+// js/archetype.js — тест на архетипы и типажи
 
-const questions = [
+import { saveLog } from "./log.js";
+
+const testQuestions = [
   {
     q: "Как ты решаешь конфликты?",
     a: { Хищник: 2, Стратег: 1 }
@@ -34,9 +36,13 @@ let archetypeScores = {
 
 export function startTest() {
   currentQuestion = 0;
-  for (let key in archetypeScores) {
-    archetypeScores[key] = 0;
-  }
+  archetypeScores = {
+    Хищник: 0,
+    Стратег: 0,
+    Провокатор: 0,
+    Оракул: 0,
+    Исполнитель: 0
+  };
   showQuestion();
 }
 
@@ -45,11 +51,11 @@ function showQuestion() {
   const result = document.getElementById("result");
   result.innerHTML = "";
 
-  if (currentQuestion >= questions.length) {
+  if (currentQuestion >= testQuestions.length) {
     return showResult();
   }
 
-  const q = questions[currentQuestion];
+  const q = testQuestions[currentQuestion];
   quiz.innerHTML = `<p>${q.q}</p>`;
   Object.entries(q.a).forEach(([type, score]) => {
     const btn = document.createElement("button");
@@ -71,22 +77,22 @@ function showResult() {
   const result = document.getElementById("result");
 
   result.innerHTML = `<h3>Ты — ${max[0]}</h3><p>${describeArchetype(max[0])}</p>`;
-  saveLog("Пройден тест архетипа: " + max[0]);
+  saveLog(`Пройден тест: архетип — ${max[0]}`);
 }
 
 function describeArchetype(type) {
   switch (type) {
     case "Хищник":
-      return "Атакующий, решительный, опасный. Действует быстро, редко объясняет. Используй силу, доминируй.";
+      return "Решительный, агрессивный, доминирующий. Действует быстро, не объясняет.";
     case "Стратег":
-      return "Планировщик. Управляет ресурсами, людьми и ситуациями. Действенен, когда не торопится.";
+      return "Просчитывает, управляет, держит дистанцию. Мастер контроля.";
     case "Провокатор":
-      return "Вбрасывает хаос, управляет реакциями. Используй дестабилизацию как оружие.";
+      return "Разрушает шаблоны, управляет эмоциями, создаёт хаос.";
     case "Оракул":
-      return "Знающий. Сохраняй молчание, вливай информацию каплями. Ум — твоя броня.";
+      return "Наблюдатель, предсказатель, действует из тени. Видит слабости.";
     case "Исполнитель":
-      return "Надёжный. Встаёт и делает. Сила в повторении. За ним тянутся слабые.";
+      return "Стабилен, силён в рутине, опора в хаосе. Не сбивается с пути.";
     default:
-      return "Наблюдатель вне архетипов.";
+      return "Неопределённая сущность.";
   }
 }
