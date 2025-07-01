@@ -1,4 +1,6 @@
-// js/log.js — Лог действий и график активности
+// js/log.js — лог действий + график активности
+
+let activityChart;
 
 export function saveLog(entry) {
   const now = new Date();
@@ -6,7 +8,6 @@ export function saveLog(entry) {
   const log = JSON.parse(localStorage.getItem("activityLog") || "[]");
   log.push({ time: timestamp, entry });
   localStorage.setItem("activityLog", JSON.stringify(log));
-  localStorage.setItem("lastActionDate", now.toLocaleDateString());
 }
 
 export function toggleLog() {
@@ -17,14 +18,13 @@ export function toggleLog() {
 }
 
 export function renderLog() {
+  const logList = document.getElementById("logList");
+  logList.innerHTML = "";
   const log = JSON.parse(localStorage.getItem("activityLog") || "[]").reverse();
-  const list = document.getElementById("logList");
-  if (!list) return;
-  list.innerHTML = "";
   log.forEach(item => {
     const li = document.createElement("li");
     li.textContent = `${item.time} — ${item.entry}`;
-    list.appendChild(li);
+    logList.appendChild(li);
   });
 }
 
@@ -40,21 +40,21 @@ export function updateActivityChart() {
   const labels = Object.keys(map);
   const values = Object.values(map);
 
-  if (window.activityChart) {
-    window.activityChart.destroy();
+  if (activityChart) {
+    activityChart.destroy();
   }
 
   const ctx = document.getElementById("activityChart").getContext("2d");
-  window.activityChart = new Chart(ctx, {
+  activityChart = new Chart(ctx, {
     type: "line",
     data: {
-      labels,
+      labels: labels,
       datasets: [{
         label: "Активность (действий в день)",
         data: values,
         fill: false,
         borderColor: "#0f0",
-        tension: 0.3
+        tension: 0.2
       }]
     },
     options: {
@@ -69,7 +69,9 @@ export function updateActivityChart() {
           grid: { color: "#333" }
         }
       },
-      plugins: { legend: { display: false } }
+      plugins: {
+        legend: { display: false }
+      }
     }
   });
 }
