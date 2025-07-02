@@ -3,15 +3,19 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>BlackTrigger — Штаб управления</title>
+  <title>BlackTrigger</title>
+
+  <!-- Манифест и стили -->
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="style.css" />
+
+  <!-- Chart.js для графиков -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <h1>BlackTrigger — Штаб управления</h1>
 
-  <!-- Состояние пользователя -->
+  <!-- 📌 Состояние -->
   <section id="state-block">
     <h2>📌 Состояние</h2>
     <select id="userState">
@@ -22,22 +26,22 @@
     <button onclick="setState()">Обновить</button>
   </section>
 
-  <!-- Правило дня -->
+  <!-- 📜 Правило дня -->
   <section id="rule-block">
     <h2>📜 Правило дня</h2>
     <div id="rule">Загружается...</div>
-    <button onclick="getRule()">Следующее правило</button>
+    <button onclick="getRule()">Следующее</button>
   </section>
 
-  <!-- План на день -->
+  <!-- 📋 План на день -->
   <section id="task-block">
-    <h2>📋 План на день</h2>
+    <h2>📋 План</h2>
     <input type="text" id="taskInput" placeholder="Задача..." />
     <button onclick="addTask()">Добавить</button>
     <ul id="taskList"></ul>
   </section>
 
-  <!-- Напоминания -->
+  <!-- ⏰ Напоминания -->
   <section id="reminder-block">
     <h2>⏰ Напоминания</h2>
     <input type="time" id="reminderTime" />
@@ -46,7 +50,7 @@
     <ul id="reminderList"></ul>
   </section>
 
-  <!-- Окружение -->
+  <!-- 👥 Окружение -->
   <section id="people-block">
     <h2>👥 Окружение</h2>
     <input type="text" id="personName" placeholder="Имя / позывной" />
@@ -60,7 +64,7 @@
     <ul id="peopleList"></ul>
   </section>
 
-  <!-- Физо -->
+  <!-- 🏋️‍♂️ Физо -->
   <section id="fit-block">
     <h2>🏋️‍♂️ Физо</h2>
     <input type="text" id="exercise" placeholder="Тип (бег, отжимания...)" />
@@ -69,13 +73,13 @@
     <ul id="fitLog"></ul>
   </section>
 
-  <!-- График физо -->
+  <!-- 📊 График физо -->
   <section id="fit-chart-block">
-    <h2>📊 График прогресса</h2>
+    <h2>📊 Прогресс физо</h2>
     <canvas id="fitChart" width="400" height="200"></canvas>
   </section>
 
-  <!-- Архетип -->
+  <!-- 🧠 Архетип -->
   <section id="test-block">
     <h2>🧠 Архетип</h2>
     <div id="quiz"></div>
@@ -83,7 +87,7 @@
     <div id="result"></div>
   </section>
 
-  <!-- Карта стратегии -->
+  <!-- 🗺️ Карта стратегии -->
   <section id="strategy-block">
     <h2>🗺️ Карта стратегии</h2>
     <input type="text" id="goalInput" placeholder="Цель..." />
@@ -96,15 +100,15 @@
     <ul id="strategyList"></ul>
   </section>
 
-  <!-- Лог активности -->
+  <!-- 📚 Лог -->
   <section id="log-block">
-    <h2>📈 Лог активности</h2>
-    <button onclick="toggleLog()">Показать/Скрыть</button>
+    <h2>📚 Лог активности</h2>
+    <button onclick="toggleLog()">Показать / Скрыть</button>
     <ul id="logList" style="display:none;"></ul>
     <canvas id="activityChart" width="400" height="150"></canvas>
   </section>
 
-  <!-- Подключение единого скрипта -->
+  <!-- ✅ Подключение всей логики -->
   <script type="module" src="js/main.js"></script>
 </body>
 </html>
