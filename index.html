@@ -69,10 +69,25 @@
     <ul id="fitLog"></ul>
   </section>
 
-  <!-- 📊 График -->
+  <!-- 📊 График физо -->
   <section id="fit-chart-block">
     <h2>📊 График прогресса</h2>
     <canvas id="fitChart" width="400" height="200"></canvas>
+  </section>
+
+  <!-- 💸 Доходы и расходы -->
+  <section id="finance-block">
+    <h2>💸 Доходы и расходы</h2>
+    <input type="number" id="financeAmount" placeholder="Сумма" />
+    <select id="financeType">
+      <option value="income">Доход</option>
+      <option value="expense">Расход</option>
+    </select>
+    <input type="text" id="financeDesc" placeholder="Описание" />
+    <button onclick="addFinance()">Записать</button>
+    <ul id="financeList"></ul>
+    <div id="financeSummary"></div>
+    <canvas id="financeChart" width="400" height="200"></canvas>
   </section>
 
   <!-- 🧠 Архетип -->
@@ -105,6 +120,13 @@
   </section>
 
   <!-- 🔁 Подключение -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/service-worker.js")
+        .then(() => console.log("Service Worker зарегистрирован"))
+        .catch(err => console.error("Ошибка регистрации Service Worker:", err));
+    }
+  </script>
   <script type="module" src="main.js"></script>
 </body>
 </html>
