@@ -408,6 +408,14 @@ function updateFitChart() {
     }
   });
 }
+window.getRule = getRule;
+window.addTask = addTask;
+window.addPerson = addPerson;
+window.addReminder = addReminder;
+window.addWorkout = addWorkout;
+window.startTest = startTest;
+window.addGoal = addGoal;
+window.toggleLog = toggleLog;
 
 // ——————————————————————————————
 // ⚠️ Инициализация
