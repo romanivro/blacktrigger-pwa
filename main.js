@@ -412,15 +412,14 @@ function updateFitChart() {
 // ——————————————————————————————
 // ⚠️ Инициализация
 // ——————————————————————————————
-window.addEventListener("DOMContentLoaded",()=>{
-  renderState();
+window.addEventListener("DOMContentLoaded", () => {
   getRule();
-  renderLog();
   renderTasks();
-  renderReminders();
-  scheduleAllReminders();
   renderPeople();
-  renderFitLog();
+  renderReminders();
+  renderWorkouts();
+  renderLog();
   updateFitChart();
-  renderGoals();
+  updateActivityChart();
+  scheduleAllReminders();
 });
