@@ -1,8 +1,27 @@
+// Проверка доступности localStorage
+function checkLocalStorage() {
+  try {
+    localStorage.setItem("test", "test");
+    localStorage.removeItem("test");
+    console.log("localStorage доступен");
+    return true;
+  } catch (e) {
+    console.error("localStorage недоступен:", e);
+    alert("Ошибка: localStorage недоступен. Проверьте настройки браузера (режим инкогнито может блокировать).");
+    return false;
+  }
+}
+
 // ——————————————————————————————
 // 📌 Состояние пользователя
 // ——————————————————————————————
 function setState() {
-  const st = document.getElementById("userState").value;
+  const userState = document.getElementById("userState");
+  if (!userState) {
+    console.error("Элемент #userState не найден");
+    return;
+  }
+  const st = userState.value;
   try {
     localStorage.setItem("userState", st);
     console.log("Состояние сохранено:", st);
@@ -13,9 +32,14 @@ function setState() {
   }
 }
 function renderState() {
+  const userState = document.getElementById("userState");
+  if (!userState) {
+    console.error("Элемент #userState не найден");
+    return;
+  }
   try {
     const st = localStorage.getItem("userState") || "focus";
-    document.getElementById("userState").value = st;
+    userState.value = st;
     console.log("Состояние загружено:", st);
   } catch (e) {
     console.error("Ошибка загрузки состояния:", e);
@@ -38,10 +62,15 @@ const rules = [
   "Правильное ≠ выгодное. Выбирай выгоду."
 ];
 function getRule() {
+  const ruleElement = document.getElementById("rule");
+  if (!ruleElement) {
+    console.error("Элемент #rule не найден");
+    return;
+  }
   try {
     const index = Math.floor(Math.random() * rules.length);
-    document.getElementById("rule").textContent = rules[index];
-    saveLog("Получено правило дня");
+    ruleElement.textContent = rules[index];
+    saveLog("Получено правило дня: " + rules[index]);
     console.log("Правило дня обновлено:", rules[index]);
   } catch (e) {
     console.error("Ошибка обновления правила дня:", e);
@@ -52,6 +81,7 @@ function getRule() {
 // 🧠 Лог действий
 // ——————————————————————————————
 function saveLog(entry) {
+  if (!checkLocalStorage()) return;
   try {
     const log = JSON.parse(localStorage.getItem("activityLog") || "[]");
     log.push({ time: new Date().toLocaleString(), entry });
@@ -65,12 +95,20 @@ function saveLog(entry) {
 }
 function toggleLog() {
   const ul = document.getElementById("logList");
+  if (!ul) {
+    console.error("Элемент #logList не найден");
+    return;
+  }
   ul.style.display = ul.style.display === "none" ? "block" : "none";
   renderLog();
 }
 function renderLog() {
+  const ul = document.getElementById("logList");
+  if (!ul) {
+    console.error("Элемент #logList не найден");
+    return;
+  }
   try {
-    const ul = document.getElementById("logList");
     ul.innerHTML = "";
     const log = JSON.parse(localStorage.getItem("activityLog") || "[]").reverse();
     log.forEach(item => {
@@ -85,6 +123,11 @@ function renderLog() {
 }
 let activityChart = null;
 function updateActivityChart() {
+  const ctx = document.getElementById("activityChart");
+  if (!ctx) {
+    console.error("Элемент #activityChart не найден");
+    return;
+  }
   try {
     const raw = JSON.parse(localStorage.getItem("activityLog") || "[]");
     const map = {};
@@ -98,9 +141,8 @@ function updateActivityChart() {
       console.log("Нет данных для графика активности");
       return;
     }
-    const ctx = document.getElementById("activityChart").getContext("2d");
     if (activityChart) activityChart.destroy();
-    activityChart = new Chart(ctx, {
+    activityChart = new Chart(ctx.getContext("2d"), {
       type: "line",
       data: { labels, datasets: [{ label: "Действия в день", data, fill: false, borderColor: "#0f0" }] },
       options: { scales: { y: { beginAtZero: true }, x: {} }, plugins: { legend: { display: false } } }
@@ -114,10 +156,16 @@ function updateActivityChart() {
 // ——————————————————————————————
 // 📋 План на день
 // ——————————————————————————————
-let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+let tasks = [];
 function addTask() {
+  const taskInput = document.getElementById("taskInput");
+  const taskList = document.getElementById("taskList");
+  if (!taskInput || !taskList) {
+    console.error("Элементы #taskInput или #taskList не найдены");
+    return;
+  }
   try {
-    const v = document.getElementById("taskInput").value.trim();
+    const v = taskInput.value.trim();
     if (!v) {
       console.warn("Пустой ввод задачи");
       return;
@@ -126,16 +174,20 @@ function addTask() {
     saveTasks();
     renderTasks();
     saveLog("Добавлена задача: " + v);
-    document.getElementById("taskInput").value = "";
+    taskInput.value = "";
     console.log("Задача добавлена:", v);
   } catch (e) {
     console.error("Ошибка добавления задачи:", e);
   }
 }
 function renderTasks() {
+  const taskList = document.getElementById("taskList");
+  if (!taskList) {
+    console.error("Элемент #taskList не найден");
+    return;
+  }
   try {
-    const ul = document.getElementById("taskList");
-    ul.innerHTML = "";
+    taskList.innerHTML = "";
     tasks.forEach((t, i) => {
       const li = document.createElement("li");
       li.textContent = t.text;
@@ -157,7 +209,7 @@ function renderTasks() {
         saveLog("Удалена задача: " + t.text);
       };
       li.appendChild(btn);
-      ul.appendChild(li);
+      taskList.appendChild(li);
     });
     console.log("Задачи отображены, всего:", tasks.length);
   } catch (e) {
@@ -165,6 +217,7 @@ function renderTasks() {
   }
 }
 function saveTasks() {
+  if (!checkLocalStorage()) return;
   try {
     localStorage.setItem("tasks", JSON.stringify(tasks));
     console.log("Задачи сохранены:", tasks);
@@ -172,15 +225,32 @@ function saveTasks() {
     console.error("Ошибка сохранения задач:", e);
   }
 }
+function loadTasks() {
+  if (!checkLocalStorage()) return;
+  try {
+    tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+    console.log("Задачи загружены:", tasks);
+  } catch (e) {
+    console.error("Ошибка загрузки задач:", e);
+    tasks = [];
+  }
+}
 
 // ——————————————————————————————
 // ⏰ Напоминания
 // ——————————————————————————————
-let reminders = JSON.parse(localStorage.getItem("reminders") || "[]");
+let reminders = [];
 function addReminder() {
+  const reminderTime = document.getElementById("reminderTime");
+  const reminderText = document.getElementById("reminderText");
+  const reminderList = document.getElementById("reminderList");
+  if (!reminderTime || !reminderText || !reminderList) {
+    console.error("Элементы #reminderTime, #reminderText или #reminderList не найдены");
+    return;
+  }
   try {
-    const time = document.getElementById("reminderTime").value;
-    const text = document.getElementById("reminderText").value.trim();
+    const time = reminderTime.value;
+    const text = reminderText.value.trim();
     if (!time || !text) {
       console.warn("Пустой ввод напоминания");
       return;
@@ -190,17 +260,21 @@ function addReminder() {
     renderReminders();
     scheduleAllReminders();
     saveLog("Добавлено напоминание: " + text);
-    document.getElementById("reminderText").value = "";
+    reminderText.value = "";
     console.log("Напоминание добавлено:", { time, text });
   } catch (e) {
     console.error("Ошибка добавления напоминания:", e);
   }
 }
 function renderReminders() {
+  const ul = document.getElementById("reminderList");
+  if (!ul) {
+    console.error("Элемент #reminderList не найден");
+    return;
+  }
   try {
-    const ul = document.getElementById("reminderList");
     ul.innerHTML = "";
-    reminders.forEach((r, i lê) => {
+    reminders.forEach((r, i) => {
       const li = document.createElement("li");
       li.textContent = `${r.time} — ${r.text}`;
       const btn = document.createElement("button");
@@ -211,12 +285,12 @@ function renderReminders() {
         renderReminders();
         saveLog("Удалено напоминание: " + r.text);
       };
-      li.appendChild( btn);
+      li.appendChild(btn);
       ul.appendChild(li);
     });
     console.log("Напоминания отображены, всего:", reminders.length);
   } catch (e) {
-    console.error("Ошибка р reincarnate напоминаний:", e);
+    console.error("Ошибка рендеринга напоминаний:", e);
   }
 }
 function scheduleAllReminders() {
@@ -247,15 +321,32 @@ function scheduleAllReminders() {
     console.error("Ошибка планирования напоминаний:", e);
   }
 }
+function loadReminders() {
+  if (!checkLocalStorage()) return;
+  try {
+    reminders = JSON.parse(localStorage.getItem("reminders") || "[]");
+    console.log("Напоминания загружены:", reminders);
+  } catch (e) {
+    console.error("Ошибка загрузки напоминаний:", e);
+    reminders = [];
+  }
+}
 
 // ——————————————————————————————
 // 👥 Окружение
 // ——————————————————————————————
-let people = JSON.parse(localStorage.getItem("people") || "[]");
+let people = [];
 function addPerson() {
+  const personName = document.getElementById("personName");
+  const personStatus = document.getElementById("personStatus");
+  const peopleList = document.getElementById("peopleList");
+  if (!personName || !personStatus || !peopleList) {
+    console.error("Элементы #personName, #personStatus или #peopleList не найдены");
+    return;
+  }
   try {
-    const name = document.getElementById("personName").value.trim();
-    const status = document.getElementById("personStatus").value;
+    const name = personName.value.trim();
+    const status = personStatus.value;
     if (!name) {
       console.warn("Пустое имя человека");
       return;
@@ -264,15 +355,19 @@ function addPerson() {
     savePeople();
     renderPeople();
     saveLog("Добавлен человек: " + name);
-    document.getElementById("personName").value = "";
+    personName.value = "";
     console.log("Человек добавлен:", { name, status });
   } catch (e) {
     console.error("Ошибка добавления человека:", e);
   }
 }
 function renderPeople() {
+  const ul = document.getElementById("peopleList");
+  if (!ul) {
+    console.error("Элемент #peopleList не найден");
+    return;
+  }
   try {
-    const ul = document.getElementById("peopleList");
     ul.innerHTML = "";
     people.forEach((p, i) => {
       const li = document.createElement("li");
@@ -312,6 +407,7 @@ function renderPeople() {
   }
 }
 function savePeople() {
+  if (!checkLocalStorage()) return;
   try {
     localStorage.setItem("people", JSON.stringify(people));
     console.log("Люди сохранены:", people);
@@ -319,35 +415,55 @@ function savePeople() {
     console.error("Ошибка сохранения людей:", e);
   }
 }
+function loadPeople() {
+  if (!checkLocalStorage()) return;
+  try {
+    people = JSON.parse(localStorage.getItem("people") || "[]");
+    console.log("Люди загружены:", people);
+  } catch (e) {
+    console.error("Ошибка загрузки людей:", e);
+    people = [];
+  }
+}
 
 // ——————————————————————————————
 // 🏋️ Физо
 // ——————————————————————————————
-let fitLog = JSON.parse(localStorage.getItem("fitLog") || "[]");
-let fitChart = null;
+let fitLog = [];
 function addWorkout() {
+  const exercise = document.getElementById("exercise");
+  const amount = document.getElementById("amount");
+  const fitLogList = document.getElementById("fitLog");
+  if (!exercise || !amount || !fitLogList) {
+    console.error("Элементы #exercise, #amount или #fitLog не найдены");
+    return;
+  }
   try {
-    const exercise = document.getElementById("exercise").value.trim();
-    const amount = parseFloat(document.getElementById("amount").value) || 0;
-    if (!exercise || !amount) {
+    const exerciseValue = exercise.value.trim();
+    const amountValue = parseFloat(amount.value) || 0;
+    if (!exerciseValue || !amountValue) {
       console.warn("Пустой ввод физо");
       return;
     }
-    fitLog.push({ exercise, amount, date: new Date().toISOString() });
+    fitLog.push({ exercise: exerciseValue, amount: amountValue, date: new Date().toISOString() });
     localStorage.setItem("fitLog", JSON.stringify(fitLog));
     renderFitLog();
     updateFitChart();
-    saveLog(`Физо: ${exercise}=${amount}`);
-    document.getElementById("exercise").value = "";
-    document.getElementById("amount").value = "";
-    console.log("Физо добавлено:", { exercise, amount });
+    saveLog(`Физо: ${exerciseValue}=${amountValue}`);
+    exercise.value = "";
+    amount.value = "";
+    console.log("Физо добавлено:", { exercise: exerciseValue, amount: amountValue });
   } catch (e) {
     console.error("Ошибка добавления физо:", e);
   }
 }
 function renderFitLog() {
+  const ul = document.getElementById("fitLog");
+  if (!ul) {
+    console.error("Элемент #fitLog не найден");
+    return;
+  }
   try {
-    const ul = document.getElementById("fitLog");
     ul.innerHTML = "";
     fitLog.forEach((e, i) => {
       const dt = new Date(e.date).toLocaleDateString();
@@ -371,6 +487,11 @@ function renderFitLog() {
   }
 }
 function updateFitChart() {
+  const ctx = document.getElementById("fitChart");
+  if (!ctx) {
+    console.error("Элемент #fitChart не найден");
+    return;
+  }
   try {
     const sums = fitLog.reduce((a, e) => {
       a[e.exercise] = (a[e.exercise] || 0) + e.amount;
@@ -382,9 +503,8 @@ function updateFitChart() {
       console.log("Нет данных для графика физо");
       return;
     }
-    const ctx = document.getElementById("fitChart").getContext("2d");
-    if (fitChart) fitChart.destroy();
-    fitChart = new Chart(ctx, {
+    if (window.fitChart) window.fitChart.destroy();
+    window.fitChart = new Chart(ctx.getContext("2d"), {
       type: "bar",
       data: { labels, datasets: [{ data, backgroundColor: "#0f0" }] },
       options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
@@ -394,17 +514,34 @@ function updateFitChart() {
     console.error("Ошибка обновления графика физо:", e);
   }
 }
+function loadFitLog() {
+  if (!checkLocalStorage()) return;
+  try {
+    fitLog = JSON.parse(localStorage.getItem("fitLog") || "[]");
+    console.log("Физо загружено:", fitLog);
+  } catch (e) {
+    console.error("Ошибка загрузки физо:", e);
+    fitLog = [];
+  }
+}
 
 // ——————————————————————————————
 // 💸 Доходы и расходы
 // ——————————————————————————————
-let financeLog = JSON.parse(localStorage.getItem("financeLog") || "[]");
-let financeChart = null;
+let financeLog = [];
 function addFinance() {
+  const financeAmount = document.getElementById("financeAmount");
+  const financeType = document.getElementById("financeType");
+  const financeDesc = document.getElementById("financeDesc");
+  const financeList = document.getElementById("financeList");
+  if (!financeAmount || !financeType || !financeDesc || !financeList) {
+    console.error("Элементы #financeAmount, #financeType, #financeDesc или #financeList не найдены");
+    return;
+  }
   try {
-    const amount = parseFloat(document.getElementById("financeAmount").value) || 0;
-    const type = document.getElementById("financeType").value;
-    const desc = document.getElementById("financeDesc").value.trim();
+    const amount = parseFloat(financeAmount.value) || 0;
+    const type = financeType.value;
+    const desc = financeDesc.value.trim();
     if (!amount || !desc) {
       console.warn("Пустой ввод финансов");
       return;
@@ -414,16 +551,21 @@ function addFinance() {
     renderFinance();
     updateFinanceChart();
     saveLog(`Финансы: ${type === "income" ? "Доход" : "Расход"} ${desc} = ${amount}`);
-    document.getElementById("financeAmount").value = "";
-    document.getElementById("financeDesc").value = "";
+    financeAmount.value = "";
+    financeDesc.value = "";
     console.log("Финансы добавлены:", { amount, type, desc });
   } catch (e) {
     console.error("Ошибка добавления финансов:", e);
   }
 }
 function renderFinance() {
+  const ul = document.getElementById("financeList");
+  const financeSummary = document.getElementById("financeSummary");
+  if (!ul || !financeSummary) {
+    console.error("Элементы #financeList или #financeSummary не найдены");
+    return;
+  }
   try {
-    const ul = document.getElementById("financeList");
     ul.innerHTML = "";
     financeLog.forEach((f, i) => {
       const dt = new Date(f.date).toLocaleDateString();
@@ -448,6 +590,11 @@ function renderFinance() {
   }
 }
 function updateFinanceSummary() {
+  const financeSummary = document.getElementById("financeSummary");
+  if (!financeSummary) {
+    console.error("Элемент #financeSummary не найден");
+    return;
+  }
   try {
     const now = new Date();
     const thirtyDaysAgo = new Date(now.setDate(now.getDate() - 30));
@@ -456,7 +603,7 @@ function updateFinanceSummary() {
     const expense = recent.reduce((sum, f) => f.type === "expense" ? sum + f.amount : sum, 0);
     const total = income - expense;
     const ratio = income + expense > 0 ? (income / (income + expense) * 100).toFixed(2) : 0;
-    document.getElementById("financeSummary").innerHTML = `
+    financeSummary.innerHTML = `
       Итог за 30 дней: ${total} | Доходы: ${income} | Расходы: ${expense} | Соотношение: ${ratio}%
     `;
     console.log("Финансовый итог обновлён:", { total, income, expense, ratio });
@@ -465,124 +612,14 @@ function updateFinanceSummary() {
   }
 }
 function updateFinanceChart() {
+  const ctx = document.getElementById("financeChart");
+  if (!ctx) {
+    console.error("Элемент #financeChart не найден");
+    return;
+  }
   try {
     const now = new Date();
     const thirtyDaysAgo = new Date(now.setDate(now.getDate() - 30));
     const recent = financeLog.filter(f => new Date(f.date) >= thirtyDaysAgo);
     const income = recent.reduce((sum, f) => f.type === "income" ? sum + f.amount : sum, 0);
-    const expense = recent.reduce((sum, f) => f.type === "expense" ? sum + f.amount : sum, 0);
-    const ctx = document.getElementById("financeChart").getContext("2d");
-    if (financeChart) financeChart.destroy();
-    financeChart = new Chart(ctx, {
-      type: "bar",
-      data: {
-        labels: ["Доходы", "Расходы"],
-        datasets: [{ data: [income, expense], backgroundColor: ["#0f0", "#f00"] }]
-      },
-      options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
-    });
-    console.log("График финансов обновлён");
-  } catch (e) {
-    console.error("Ошибка обновления графика финансов:", e);
-  }
-}
-
-// ——————————————————————————————
-// 🧠 Архетип
-// ——————————————————————————————
-const testQuestions = [
-  { q: "Предпочитаешь действовать?", a: { Хищник: 2, Стратег: 1 } },
-  { q: "Слушаешь или говоришь?", a: { Оракул: 2, Провокатор: 1 } },
-  { q: "Один или в команде?", a: { Исполнитель: 2, Медиатор: 1 } },
-  { q: "Эмоции или факты?", a: { Стратег: 2, Провокатор: 1 } },
-  { q: "Молчишь или провоцируешь?", a: { Хищник: 2, Провокатор: 1 } }
-];
-let currentQ = 0, scores = { Хищник: 0, Стратег: 0, Провокатор: 0, Оракул: 0, Исполнитель: 0, Медиатор: 0 };
-function startTest() {
-  try {
-    currentQ = 0;
-    Object.keys(scores).forEach(k => scores[k] = 0);
-    showQuestion();
-    console.log("Тест начат");
-  } catch (e) {
-    console.error("Ошибка начала теста:", e);
-  }
-}
-function showQuestion() {
-  try {
-    const quiz = document.getElementById("quiz"), res = document.getElementById("result");
-    res.innerHTML = "";
-    if (currentQ >= testQuestions.length) return showResult();
-    const t = testQuestions[currentQ];
-    quiz.innerHTML = `<p>${t.q}</p>`;
-    Object.entries(t.a).forEach(([type, pts]) => {
-      const btn = document.createElement("button");
-      btn.textContent = type;
-      btn.onclick = () => {
-        scores[type] += pts;
-        currentQ++;
-        showQuestion();
-      };
-      quiz.appendChild(btn);
-    });
-    console.log("Вопрос отображён:", t.q);
-  } catch (e) {
-    console.error("Ошибка отображения вопроса:", e);
-  }
-}
-function showResult() {
-  try {
-    const quiz = document.getElementById("quiz"), res = document.getElementById("result");
-    quiz.innerHTML = "";
-    const [type] = Object.entries(scores).sort((a, b) => b[1] - a[1])[0];
-    res.innerHTML = `<h3>Твой архетип: ${type}</h3>`;
-    saveLog("Пройден тест архетип: " + type);
-    console.log("Результат теста:", type);
-  } catch (e) {
-    console.error("Ошибка отображения результата теста:", e);
-  }
-}
-
-// ——————————————————————————————
-// 🗺️ Карта стратегии
-// ——————————————————————————————
-let goals = JSON.parse(localStorage.getItem("goals") || "[]");
-function addGoal() {
-  try {
-    const text = document.getElementById("goalInput").value.trim();
-    const type = document.getElementById("goalType").value;
-    if (!text) {
-      console.warn("Пустой ввод цели");
-      return;
-    }
-    goals.push({ text, type, status: "plan" });
-    localStorage.setItem("goals", JSON.stringify(goals));
-    renderGoals();
-    saveLog("Добавлена цель: " + text);
-    document.getElementById("goalInput").value = "";
-    console.log("Цель добавлена:", { text, type });
-  } catch (e) {
-    console.error("Ошибка добавления цели:", e);
-  }
-}
-function renderGoals() {
-  try {
-    const ul = document.getElementById("strategyList");
-    ul.innerHTML = "";
-    goals.forEach((g, i) => {
-      const li = document.createElement("li");
-      li.textContent = `[${g.type}] ${g.text}`;
-      li.onclick = () => {
-        const order = ["plan", "process", "done", "fail"];
-        g.status = order[(order.indexOf(g.status) + 1) % order.length];
-        localStorage.setItem("goals", JSON.stringify(goals));
-        renderGoals();
-        saveLog("Обновлен статус цели: " + g.text);
-      };
-      if (g.status === "done") li.style.textDecoration = "line-through";
-      if (g.status === "fail") li.style.opacity = 0.5;
-      const btn = document.createElement("button");
-      btn.textContent = đòi "❌";
-      btn.onclick = () => {
-        goals.splice(i, 1);
-        localStorage.setI
+    const expense = re
