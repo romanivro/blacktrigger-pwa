@@ -1,5 +1,3 @@
-// main.js
-
 // ——————————————————————————————
 // 📌 Состояние пользователя
 // ——————————————————————————————
@@ -7,12 +5,13 @@ function setState() {
   const st = document.getElementById("userState").value;
   localStorage.setItem("userState", st);
   renderState();
+  saveLog("Обновлено состояние: " + st);
 }
 function renderState() {
   const st = localStorage.getItem("userState") || "focus";
   document.getElementById("userState").value = st;
 }
-  
+
 // ——————————————————————————————
 // 📜 Правило дня
 // ——————————————————————————————
@@ -31,6 +30,7 @@ const rules = [
 function getRule() {
   const index = Math.floor(Math.random() * rules.length);
   document.getElementById("rule").textContent = rules[index];
+  saveLog("Получено правило дня");
 }
 
 // ——————————————————————————————
@@ -40,12 +40,13 @@ function saveLog(entry) {
   const log = JSON.parse(localStorage.getItem("activityLog") || "[]");
   log.push({ time: new Date().toLocaleString(), entry });
   localStorage.setItem("activityLog", JSON.stringify(log));
+  renderLog();
+  updateActivityChart();
 }
 function toggleLog() {
   const ul = document.getElementById("logList");
   ul.style.display = ul.style.display === "none" ? "block" : "none";
   renderLog();
-  updateActivityChart();
 }
 function renderLog() {
   const ul = document.getElementById("logList");
@@ -65,7 +66,9 @@ function updateActivityChart() {
     const date = item.time.split(",")[0];
     map[date] = (map[date] || 0) + 1;
   });
-  const labels = Object.keys(map), data = Object.values(map);
+  const labels = Object.keys(map);
+  const data = Object.values(map);
+  if (!labels.length) return;
   const ctx = document.getElementById("activityChart").getContext("2d");
   if (activityChart) activityChart.destroy();
   activityChart = new Chart(ctx, {
@@ -76,31 +79,41 @@ function updateActivityChart() {
 }
 
 // ——————————————————————————————
-// 📋 План на день + напоминания
+// 📋 План на день
 // ——————————————————————————————
 let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
 function addTask() {
   const v = document.getElementById("taskInput").value.trim();
   if (!v) return;
   tasks.push({ text: v, done: false });
-  saveTasks(); renderTasks();
+  saveTasks();
+  renderTasks();
   saveLog("Добавлена задача: " + v);
   document.getElementById("taskInput").value = "";
 }
 function renderTasks() {
   const ul = document.getElementById("taskList");
   ul.innerHTML = "";
-  tasks.forEach((t,i) => {
+  tasks.forEach((t, i) => {
     const li = document.createElement("li");
     li.textContent = t.text;
-    // отметка сделано
     const chk = document.createElement("input");
-    chk.type = "checkbox"; chk.checked = t.done;
-    chk.onchange = () => { t.done = chk.checked; saveTasks(); };
+    chk.type = "checkbox";
+    chk.checked = t.done;
+    chk.onchange = () => {
+      t.done = chk.checked;
+      saveTasks();
+      saveLog(t.done ? "Задача выполнена: " + t.text : "Задача отмечена как невыполненная: " + t.text);
+    };
     li.prepend(chk);
-    // кнопка удалить
     const btn = document.createElement("button");
-    btn.textContent = "❌"; btn.onclick = () => { tasks.splice(i,1); saveTasks(); renderTasks(); saveLog("Удалена задача"); };
+    btn.textContent = "❌";
+    btn.onclick = () => {
+      tasks.splice(i, 1);
+      saveTasks();
+      renderTasks();
+      saveLog("Удалена задача: " + t.text);
+    };
     li.appendChild(btn);
     ul.appendChild(li);
   });
@@ -109,180 +122,21 @@ function saveTasks() {
   localStorage.setItem("tasks", JSON.stringify(tasks));
 }
 
+// ——————————————————————————————
+// ⏰ Напоминания
+// ——————————————————————————————
 let reminders = JSON.parse(localStorage.getItem("reminders") || "[]");
 function addReminder() {
   const time = document.getElementById("reminderTime").value;
   const text = document.getElementById("reminderText").value.trim();
-  if (!time||!text) return;
+  if (!time || !text) return;
   reminders.push({ time, text });
   localStorage.setItem("reminders", JSON.stringify(reminders));
   renderReminders();
   scheduleAllReminders();
-  saveLog("Добавлено напоминание: "+text);
-  document.getElementById("reminderText").value="";
+  saveLog("Добавлено напоминание: " + text);
+  document.getElementById("reminderText").value = "";
 }
-function renderReminders() {
-  const ul = document.getElementById("reminderList");
-  ul.innerHTML = "";
-  reminders.forEach((r,i) => {
-    const li = document.createElement("li");
-    li.textContent = `${r.time} — ${r.text}`;
-    const btn = document.createElement("button");
-    btn.textContent = "❌"; btn.onclick = () => { reminders.splice(i,1); localStorage.setItem("reminders",JSON.stringify(reminders)); renderReminders(); };
-    li.appendChild(btn);
-    ul.appendChild(li);
-  });
-}
-function scheduleAllReminders() {
-  reminders.forEach(r=> {
-    const [h,m] = r.time.split(":").map(Number);
-    const now= new Date(), tgt=new Date();
-    tgt.setHours(h, m,0,0);
-    if (tgt<now) tgt.setDate(tgt.getDate()+1);
-    const delay = tgt-now;
-    setTimeout(()=>{ alert("🔔 "+r.text); scheduleAllReminders(); }, delay);
-  });
-}
-
-// ——————————————————————————————
-// 👥 Окружение + карма + метки
-// ——————————————————————————————
-let people = JSON.parse(localStorage.getItem("people")||"[]");
-function createPersonElem(p,i) {
-  const li = document.createElement("li");
-  li.innerHTML = `${p.name} — <span class="${p.status}">${p.status}</span> Karma:${p.karma}`;
-  // удалить
-  const btn = document.createElement("button"); btn.textContent="❌";
-  btn.onclick=()=>{ people.splice(i,1); savePeople(); renderPeople(); saveLog("Удалён: "+p.name); };
-  li.appendChild(btn);
-  return li;
-}
-function addPerson() {
-  const name=document.getElementById("personName").value.trim();
-  const status=document.getElementById("personStatus").value;
-  if(!name) return;
-  people.push({ name, status, karma:0 });
-  savePeople(); renderPeople();
-  saveLog("Добавлен: "+name);
-  document.getElementById("personName").value="";
-}
-function renderPeople() {
-  const ul=document.getElementById("peopleList");
-  ul.innerHTML="";
-  people.forEach((p,i)=> ul.appendChild(createPersonElem(p,i)));
-}
-function savePeople() {
-  localStorage.setItem("people",JSON.stringify(people));
-}
-
-// ——————————————————————————————
-// 🏋️ Физо + график
-// ——————————————————————————————
-let fitLog = JSON.parse(localStorage.getItem("fitLog") || "[]");
-let fitChart = null;
-function addWorkout() {
-  const exercise=document.getElementById("exercise").value.trim();
-  const amount=parseFloat(document.getElementById("amount").value)||0;
-  if(!exercise||!amount) return;
-  fitLog.push({ exercise, amount, date: new Date().toISOString() });
-  localStorage.setItem("fitLog",JSON.stringify(fitLog));
-  renderFitLog(); updateFitChart();
-  saveLog(`Физо: ${exercise}=${amount}`);
-  document.getElementById("exercise").value="";
-  document.getElementById("amount").value="";
-}
-function renderFitLog() {
-  const ul=document.getElementById("fitLog"); ul.innerHTML="";
-  fitLog.forEach((e,i)=>{
-    const dt=new Date(e.date).toLocaleDateString();
-    const li=document.createElement("li");
-    li.textContent=`${dt} ${e.exercise}: ${e.amount}`;
-    const btn=document.createElement("button");
-    btn.textContent="❌"; btn.onclick=()=>{
-      fitLog.splice(i,1);
-      localStorage.setItem("fitLog",JSON.stringify(fitLog));
-      renderFitLog(); updateFitChart();
-      saveLog("Удалено Физо");
-    };
-    li.appendChild(btn); ul.appendChild(li);
-  });
-}
-function updateFitChart() {
-  const sums=fitLog.reduce((a,e)=>(a[e.exercise]=(a[e.exercise]||0)+e.amount,a),{});
-  const labels=Object.keys(sums), data=Object.values(sums);
-  const ctx=document.getElementById("fitChart").getContext("2d");
-  if(fitChart) fitChart.destroy();
-  fitChart=new Chart(ctx,{type:"bar",data:{labels,datasets:[{data,backgroundColor:"#0f0"}]},options:{plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});
-}
-
-// ——————————————————————————————
-// 🧠 Архетип (пример 5 вопросов)
-// ——————————————————————————————
-const testQuestions=[
-  {q:"Предпочитаешь действовать?",a:{Хищник:2,Стратег:1}},
-  {q:"Слушаешь или говоришь?",a:{Оракул:2,Провокатор:1}},
-  {q:"Один или в команде?",a:{Исполнитель:2,Медиатор:1}},
-  {q:"Эмоции или факты?",a:{Стратег:2,Провокатор:1}},
-  {q:"Молчишь или провоцируешь?",a:{Хищник:2,Провокатор:1}}
-];
-let currentQ=0, scores={Хищник:0,Стратег:0,Провокатор:0,Оракул:0,Исполнитель:0,Медиатор:0};
-function startTest(){currentQ=0;Object.keys(scores).forEach(k=>scores[k]=0);showQuestion();}
-function showQuestion(){
-  const quiz=document.getElementById("quiz"), res=document.getElementById("result");
-  res.innerHTML=""; if(currentQ>=testQuestions.length) return showResult();
-  const t=testQuestions[currentQ];
-  quiz.innerHTML=`<p>${t.q}</p>`;
-  Object.entries(t.a).forEach(([type,pts])=>{
-    const btn=document.createElement("button");
-    btn.textContent=type;
-    btn.onclick=()=>{
-      scores[type]+=pts; currentQ++; showQuestion();
-    };
-    quiz.appendChild(btn);
-  });
-}
-function showResult(){
-  const quiz=document.getElementById("quiz"), res=document.getElementById("result");
-  quiz.innerHTML="";
-  const [type]=Object.entries(scores).sort((a,b)=>b[1]-a[1])[0];
-  res.innerHTML=`<h3>Твой архетип: ${type}</h3>`;
-  saveLog("Пройден тест архетип: "+type);
-}
-
-// ——————————————————————————————
-// 🗺️ Карта стратегии
-// ——————————————————————————————
-let goals=JSON.parse(localStorage.getItem("goals")||"[]");
-function addGoal(){
-  const text=document.getElementById("goalInput").value.trim();
-  const type=document.getElementById("goalType").value;
-  if(!text)return;
-  goals.push({ text, type, status:"plan" });
-  localStorage.setItem("goals",JSON.stringify(goals));
-  renderGoals(); saveLog("Добавлена цель: "+text);
-  document.getElementById("goalInput").value="";
-}
-function renderGoals(){
-  const ul=document.getElementById("strategyList"); ul.innerHTML="";
-  goals.forEach((g,i)=>{
-    const li=document.createElement("li");
-    li.textContent=`[${g.type}] ${g.text}`;
-    li.onclick=()=>{ // смена статуса
-      const order=["plan","process","done","fail"];
-      g.status= order[(order.indexOf(g.status)+1)%order.length];
-      localStorage.setItem("goals",JSON.stringify(goals));
-      renderGoals(); saveLog("Обновлен статус цели");
-    };
-    if(g.status==="done") li.style.textDecoration="line-through";
-    if(g.status==="fail") li.style.opacity=0.5;
-    // удалить
-    const btn=document.createElement("button"); btn.textContent="❌";
-    btn.onclick=()=>{ goals.splice(i,1); localStorage.setItem("goals",JSON.stringify(goals)); renderGoals(); saveLog("Удалена цель"); };
-    li.appendChild(btn);
-    ul.appendChild(li);
-  });
-}
-
 function renderReminders() {
   const ul = document.getElementById("reminderList");
   ul.innerHTML = "";
@@ -295,21 +149,30 @@ function renderReminders() {
       reminders.splice(i, 1);
       localStorage.setItem("reminders", JSON.stringify(reminders));
       renderReminders();
+      saveLog("Удалено напоминание: " + r.text);
     };
     li.appendChild(btn);
     ul.appendChild(li);
   });
 }
 function scheduleAllReminders() {
-  reminders.forEach(r => {
+  reminders.forEach((r, i) => {
     const [h, m] = r.time.split(":").map(Number);
     const now = new Date();
-    const t = new Date(); t.setHours(h, m, 0, 0);
-    if (t < now) t.setDate(now.getDate() + 1);
-    const delay = t - now;
+    const target = new Date();
+    target.setHours(h, m, 0, 0);
+    if (target < now) target.setDate(target.getDate() + 1);
+    const delay = target - now;
     setTimeout(() => {
-      alert("🔔 Напоминание: " + r.text);
-      scheduleAllReminders();
+      if (Notification.permission === "granted") {
+        new Notification(`🔔 ${r.text}`);
+      } else if (Notification.permission !== "denied") {
+        Notification.requestPermission().then(permission => {
+          if (permission === "granted") new Notification(`🔔 ${r.text}`);
+        });
+      }
+      // Планируем следующее напоминание
+      setTimeout(() => scheduleAllReminders(), 24 * 60 * 60 * 1000);
     }, delay);
   });
 }
@@ -322,9 +185,10 @@ function addPerson() {
   const name = document.getElementById("personName").value.trim();
   const status = document.getElementById("personStatus").value;
   if (!name) return;
-  people.push({ name, status });
-  savePeople(); renderPeople();
-  saveLog("Добавлен человек: "+name);
+  people.push({ name, status, karma: 0, tags: [] });
+  savePeople();
+  renderPeople();
+  saveLog("Добавлен человек: " + name);
   document.getElementById("personName").value = "";
 }
 function renderPeople() {
@@ -332,13 +196,33 @@ function renderPeople() {
   ul.innerHTML = "";
   people.forEach((p, i) => {
     const li = document.createElement("li");
-    li.innerHTML = `${p.name} — <span class="${p.status}">${p.status.toUpperCase()}</span>`;
+    li.innerHTML = `${p.name} — <span class="${p.status}">${p.status.toUpperCase()}</span> Karma: ${p.karma}`;
+    const karmaUp = document.createElement("button");
+    karmaUp.textContent = "+";
+    karmaUp.onclick = () => {
+      p.karma = Math.min(p.karma + 10, 100);
+      savePeople();
+      renderPeople();
+      saveLog(`Карма увеличена для ${p.name}: ${p.karma}`);
+    };
+    const karmaDown = document.createElement("button");
+    karmaDown.textContent = "−";
+    karmaDown.onclick = () => {
+      p.karma = Math.max(p.karma - 10, -100);
+      savePeople();
+      renderPeople();
+      saveLog(`Карма уменьшена для ${p.name}: ${p.karma}`);
+    };
     const btn = document.createElement("button");
     btn.textContent = "❌";
     btn.onclick = () => {
-      people.splice(i,1); savePeople(); renderPeople();
-      saveLog("Удалён человек: "+p.name);
+      people.splice(i, 1);
+      savePeople();
+      renderPeople();
+      saveLog("Удалён человек: " + p.name);
     };
+    li.appendChild(karmaUp);
+    li.appendChild(karmaDown);
     li.appendChild(btn);
     ul.appendChild(li);
   });
@@ -348,86 +232,78 @@ function savePeople() {
 }
 
 // ——————————————————————————————
-// 🏋️‍♂️ Физо + график
+// 🏋️ Физо
 // ——————————————————————————————
 let fitLog = JSON.parse(localStorage.getItem("fitLog") || "[]");
+let fitChart = null;
 function addWorkout() {
   const exercise = document.getElementById("exercise").value.trim();
-  const amount = parseFloat(document.getElementById("amount").value.trim());
-  if (!exercise || isNaN(amount)) return;
-  fitLog.push({ exercise, amount });
-  saveFit(); renderFit();
-  saveLog(`Физо: ${exercise} — ${amount}`);
+  const amount = parseFloat(document.getElementById("amount").value) || 0;
+  if (!exercise || !amount) return;
+  fitLog.push({ exercise, amount, date: new Date().toISOString() });
+  localStorage.setItem("fitLog", JSON.stringify(fitLog));
+  renderFitLog();
+  updateFitChart();
+  saveLog(`Физо: ${exercise}=${amount}`);
   document.getElementById("exercise").value = "";
   document.getElementById("amount").value = "";
 }
-function renderFit() {
+function renderFitLog() {
   const ul = document.getElementById("fitLog");
   ul.innerHTML = "";
-  fitLog.forEach((item, i) => {
+  fitLog.forEach((e, i) => {
+    const dt = new Date(e.date).toLocaleDateString();
     const li = document.createElement("li");
-    li.textContent = `🏃 ${item.exercise}: ${item.amount}`;
+    li.textContent = `${dt} ${e.exercise}: ${e.amount}`;
     const btn = document.createElement("button");
     btn.textContent = "❌";
-    btn.onclick = () => { fitLog.splice(i, 1); saveFit(); renderFit(); };
+    btn.onclick = () => {
+      fitLog.splice(i, 1);
+      localStorage.setItem("fitLog", JSON.stringify(fitLog));
+      renderFitLog();
+      updateFitChart();
+      saveLog("Удалено Физо");
+    };
     li.appendChild(btn);
     ul.appendChild(li);
   });
-  updateFitChart();
 }
-function saveFit() {
-  localStorage.setItem("fitLog", JSON.stringify(fitLog));
-}
-
-let fitChart = null;
 function updateFitChart() {
-  const dataMap = {};
-  fitLog.forEach(item => {
-    dataMap[item.exercise] = (dataMap[item.exercise] || 0) + item.amount;
-  });
-  const labels = Object.keys(dataMap);
-  const values = Object.values(dataMap);
+  const sums = fitLog.reduce((a, e) => {
+    a[e.exercise] = (a[e.exercise] || 0) + e.amount;
+    return a;
+  }, {});
+  const labels = Object.keys(sums);
+  const data = Object.values(sums);
+  if (!labels.length) return;
   const ctx = document.getElementById("fitChart").getContext("2d");
   if (fitChart) fitChart.destroy();
   fitChart = new Chart(ctx, {
     type: "bar",
-    data: {
-      labels,
-      datasets: [{
-        label: "Сумма по упражнениям",
-        data: values,
-        backgroundColor: "#0f0"
-      }]
-    },
-    options: {
-      scales: {
-        y: { beginAtZero: true },
-        x: {}
-      },
-      plugins: { legend: { display: false } }
-    }
+    data: { labels, datasets: [{ data, backgroundColor: "#0f0" }] },
+    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
   });
 }
-window.getRule = getRule;
-window.addTask = addTask;
-window.addPerson = addPerson;
-window.addReminder = addReminder;
-window.addWorkout = addWorkout;
-window.startTest = startTest;
-window.addGoal = addGoal;
-window.toggleLog = toggleLog;
 
 // ——————————————————————————————
-// ⚠️ Инициализация
+// 💸 Доходы и расходы
 // ——————————————————————————————
-window.addEventListener("DOMContentLoaded", () => {
-  getRule();
-  renderTasks();
-  renderPeople();
-  renderReminders();
-  renderWorkouts();
-  renderLog();
-  updateFitChart();
-  updateActivityChart();
-  scheduleAllReminders();
-});
+let financeLog = JSON.parse(localStorage.getItem("financeLog") || "[]");
+let financeChart = null;
+function addFinance() {
+  const amount = parseFloat(document.getElementById("financeAmount").value) || 0;
+  const type = document.getElementById("financeType").value;
+  const desc = document.getElementById("financeDesc").value.trim();
+  if (!amount || !desc) return;
+  financeLog.push({ amount, type, desc, date: new Date().toISOString() });
+  localStorage.setItem("financeLog", JSON.stringify(financeLog));
+  renderFinance();
+  updateFinanceChart();
+  saveLog(`Финансы: ${type === "income" ? "Доход" : "Расход"} ${desc} = ${amount}`);
+  document.getElementById("financeAmount").value = "";
+  document.getElementById("financeDesc").value = "";
+}
+function renderFinance() {
+  const ul = document.getElementById("financeList");
+  ul.innerHTML = "";
+  financeLog.forEach((f, i) =>
