@@ -1,0 +1,44 @@
+body {
+  background: #000;
+  color: #0f0;
+  font-family: monospace;
+  padding: 20px;
+  margin: 0;
+}
+h1, h2 {
+  color: #0f0;
+}
+section {
+  margin-bottom: 20px;
+}
+.green { color: #0f0; }
+.yellow { color: #ff0; }
+.red { color: #f00; }
+.contract { color: #fff; }
+button, input, select {
+  background: #111;
+  color: #0f0;
+  border: 1px solid #0f0;
+  padding: 5px 10px;
+  margin: 5px;
+  cursor: pointer;
+}
+input[type="text"], input[type="number"], input[type="time"] {
+  padding: 5px;
+}
+ul {
+  list-style: none;
+  padding: 0;
+}
+li {
+  margin: 10px 0;
+}
+.rule {
+  font-style: italic;
+}
+canvas {
+  max-width: 100%;
+}
+#financeSummary {
+  margin: 10px 0;
+}
