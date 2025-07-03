@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BlackTrigger</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <h1>BlackTrigger — Штаб управления</h1>
+
+  <!-- 📌 Состояние -->
+  <section id="state-block">
+    <h2>📌 Состояние</h2>
+    <select id="userState">
+      <option value="focus">⚖️ В фокусе</option>
+      <option value="tired">⚡️ Усталость</option>
+      <option value="flow">🚀 Подъём</option>
+    </select>
+    <button onclick="setState()">Обновить</button>
+  </section>
+
+  <!-- 📜 Правило дня -->
+  <section id="rule-block">
+    <h2>📜 Правило дня</h2>
+    <div id="rule" class="rule">Загружается...</div>
+    <button onclick="getRule()">Следующее правило</button>
+  </section>
+
+  <!-- 📋 План -->
+  <section id="task-block">
+    <h2>📋 План</h2>
+    <input type="text" id="taskInput" placeholder="Задача..." />
+    <button onclick="addTask()">Добавить</button>
+    <ul id="taskList"></ul>
+  </section>
+
+  <!-- ⏰ Напоминания -->
+  <section id="reminder-block">
+    <h2>⏰ Напоминания</h2>
+    <input type="time" id="reminderTime" />
+    <input type="text" id="reminderText" placeholder="Что напомнить?" />
+    <button onclick="addReminder()">Добавить</button>
+    <ul id="reminderList"></ul>
+  </section>
+
+  <!-- 👥 Окружение -->
+  <section id="people-block">
+    <h2>👥 Окружение</h2>
+    <input type="text" id="personName" placeholder="Имя или позывной" />
+    <select id="personStatus">
+      <option value="green">🟢 Лояльный</option>
+      <option value="yellow">🟡 Нейтрал</option>
+      <option value="red">🔴 Враг</option>
+      <option value="contract">✍️ Контракт</option>
+    </select>
+    <button onclick="addPerson()">Добавить</button>
+    <ul id="peopleList"></ul>
+  </section>
+
+  <!-- 🏋️ Физо -->
+  <section id="fit-block">
+    <h2>🏋️ Физо</h2>
+    <input type="text" id="exercise" placeholder="Тип (бег, отжимания...)" />
+    <input type="number" id="amount" placeholder="Результат" />
+    <button onclick="addWorkout()">Записать</button>
+    <ul id="fitLog"></ul>
+  </section>
+
+  <!-- 📊 График -->
+  <section id="fit-chart-block">
+    <h2>📊 График прогресса</h2>
+    <canvas id="fitChart" width="400" height="200"></canvas>
+  </section>
+
+  <!-- 🧠 Архетип -->
+  <section id="test-block">
+    <h2>🧠 Архетип</h2>
+    <div id="quiz"></div>
+    <button onclick="startTest()">Пройти тест</button>
+    <div id="result"></div>
+  </section>
+
+  <!-- 🗺️ Стратегия -->
+  <section id="strategy-block">
+    <h2>🗺️ Карта стратегии</h2>
+    <input type="text" id="goalInput" placeholder="Цель..." />
+    <select id="goalType">
+      <option value="short">Краткосрочная</option>
+      <option value="long">Долгосрочная</option>
+      <option value="tactical">Ситуативная</option>
+    </select>
+    <button onclick="addGoal()">Добавить</button>
+    <ul id="strategyList"></ul>
+  </section>
+
+  <!-- 📈 Лог -->
+  <section id="log-block">
+    <h2>📈 Лог активности</h2>
+    <button onclick="toggleLog()">Показать / Скрыть</button>
+    <ul id="logList" style="display:none;"></ul>
+    <canvas id="activityChart" width="400" height="150"></canvas>
+  </section>
+
+  <!-- 🔁 Подключение -->
+  <script type="module" src="main.js"></script>
+</body>
+</html>
