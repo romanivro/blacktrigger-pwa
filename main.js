@@ -283,6 +283,132 @@ function renderGoals(){
   });
 }
 
+function renderReminders() {
+  const ul = document.getElementById("reminderList");
+  ul.innerHTML = "";
+  reminders.forEach((r, i) => {
+    const li = document.createElement("li");
+    li.textContent = `${r.time} — ${r.text}`;
+    const btn = document.createElement("button");
+    btn.textContent = "❌";
+    btn.onclick = () => {
+      reminders.splice(i, 1);
+      localStorage.setItem("reminders", JSON.stringify(reminders));
+      renderReminders();
+    };
+    li.appendChild(btn);
+    ul.appendChild(li);
+  });
+}
+function scheduleAllReminders() {
+  reminders.forEach(r => {
+    const [h, m] = r.time.split(":").map(Number);
+    const now = new Date();
+    const t = new Date(); t.setHours(h, m, 0, 0);
+    if (t < now) t.setDate(now.getDate() + 1);
+    const delay = t - now;
+    setTimeout(() => {
+      alert("🔔 Напоминание: " + r.text);
+      scheduleAllReminders();
+    }, delay);
+  });
+}
+
+// ——————————————————————————————
+// 👥 Окружение
+// ——————————————————————————————
+let people = JSON.parse(localStorage.getItem("people") || "[]");
+function addPerson() {
+  const name = document.getElementById("personName").value.trim();
+  const status = document.getElementById("personStatus").value;
+  if (!name) return;
+  people.push({ name, status });
+  savePeople(); renderPeople();
+  saveLog("Добавлен человек: "+name);
+  document.getElementById("personName").value = "";
+}
+function renderPeople() {
+  const ul = document.getElementById("peopleList");
+  ul.innerHTML = "";
+  people.forEach((p, i) => {
+    const li = document.createElement("li");
+    li.innerHTML = `${p.name} — <span class="${p.status}">${p.status.toUpperCase()}</span>`;
+    const btn = document.createElement("button");
+    btn.textContent = "❌";
+    btn.onclick = () => {
+      people.splice(i,1); savePeople(); renderPeople();
+      saveLog("Удалён человек: "+p.name);
+    };
+    li.appendChild(btn);
+    ul.appendChild(li);
+  });
+}
+function savePeople() {
+  localStorage.setItem("people", JSON.stringify(people));
+}
+
+// ——————————————————————————————
+// 🏋️‍♂️ Физо + график
+// ——————————————————————————————
+let fitLog = JSON.parse(localStorage.getItem("fitLog") || "[]");
+function addWorkout() {
+  const exercise = document.getElementById("exercise").value.trim();
+  const amount = parseFloat(document.getElementById("amount").value.trim());
+  if (!exercise || isNaN(amount)) return;
+  fitLog.push({ exercise, amount });
+  saveFit(); renderFit();
+  saveLog(`Физо: ${exercise} — ${amount}`);
+  document.getElementById("exercise").value = "";
+  document.getElementById("amount").value = "";
+}
+function renderFit() {
+  const ul = document.getElementById("fitLog");
+  ul.innerHTML = "";
+  fitLog.forEach((item, i) => {
+    const li = document.createElement("li");
+    li.textContent = `🏃 ${item.exercise}: ${item.amount}`;
+    const btn = document.createElement("button");
+    btn.textContent = "❌";
+    btn.onclick = () => { fitLog.splice(i, 1); saveFit(); renderFit(); };
+    li.appendChild(btn);
+    ul.appendChild(li);
+  });
+  updateFitChart();
+}
+function saveFit() {
+  localStorage.setItem("fitLog", JSON.stringify(fitLog));
+}
+
+let fitChart = null;
+function updateFitChart() {
+  const dataMap = {};
+  fitLog.forEach(item => {
+    dataMap[item.exercise] = (dataMap[item.exercise] || 0) + item.amount;
+  });
+  const labels = Object.keys(dataMap);
+  const values = Object.values(dataMap);
+  const ctx = document.getElementById("fitChart").getContext("2d");
+  if (fitChart) fitChart.destroy();
+  fitChart = new Chart(ctx, {
+    type: "bar",
+    data: {
+      labels,
+      datasets: [{
+        label: "Сумма по упражнениям",
+        data: values,
+        backgroundColor: "#0f0"
+      }]
+    },
+    options: {
+      scales: {
+        y: { beginAtZero: true },
+        x: {}
+      },
+      plugins: { legend: { display: false } }
+    }
+  });
+}
+
 // ——————————————————————————————
 // ⚠️ Инициализация
 // ——————————————————————————————
